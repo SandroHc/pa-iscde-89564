@@ -1,17 +1,26 @@
 package pt.iscte.pidesco.minimap.internal;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorListener;
-import pt.iscte.pidesco.javaeditor.service.JavaEditorListener.Adapter;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 import pt.iscte.pidesco.minimap.Activator;
 
@@ -22,34 +31,16 @@ public class MinimapView implements PidescoView {
 	/** the current instance for the plugin view */
 	private static MinimapView instance;
 	
+	private ScrolledComposite composite;
+	
 	public MinimapView() {
 		instance = this;
 
-		setupListeners();
 		loadFilters();
 	}
 
 	public static MinimapView getInstance() {
 		return instance;
-	}
-
-	private void setupListeners() {
-		BundleContext context = Activator.getContext();
-
-		ServiceReference<JavaEditorServices> serviceReference = context.getServiceReference(JavaEditorServices.class);
-		JavaEditorServices service = context.getService(serviceReference);
-
-		service.addListener(new Adapter() {
-			@Override
-			public void fileOpened(File file) {
-				System.out.println("FILE OPENED: " + file);
-			}
-
-			@Override
-			public void fileClosed(File file) {
-				System.out.println("FILE CLOSED: " + file);
-			}
-		});
 	}
 	
 	private void loadFilters() {
@@ -69,15 +60,113 @@ public class MinimapView implements PidescoView {
 
 	@Override
 	public void createContents(Composite viewArea, Map<String, Image> images) {
-		viewArea.setLayout(new RowLayout(SWT.VERTICAL));
-//		BundleContext context = Activator.getContext();
-//		service.addListener(new ProjectBrowserListener.Adapter() {
-//			@Override
-//			public void doubleClick(SourceElement element) {
-//				new Label(viewArea, SWT.NONE).setText(element.getName());
-//				viewArea.layout();
-//			}
-//		});
+		viewArea.setLayout(new RowLayout(SWT.HORIZONTAL));
+		
+		
+		BundleContext context = Activator.getContext();
+
+		ServiceReference<JavaEditorServices> serviceReference = context.getServiceReference(JavaEditorServices.class);
+		JavaEditorServices service = context.getService(serviceReference);
+
+		JavaEditorListener listener = new JavaEditorListener() {
+			@Override
+			public void fileOpened(File file) {
+				System.out.println("FILE OPENED: " + file);
+				ScrolledComposite scroll = MinimapView.this.composite;
+				
+				return;/*				
+				String contents;
+				try {
+					contents = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+				} catch (IOException e) {
+					contents = "Error loading file: " + file;
+					e.printStackTrace();
+				}
+
+				// contents.split("\n")
+				
+				
+				Label label = new Label(MinimapView.this.composite, SWT.NONE);
+				label.setText(contents);
+				// label.setBackground( this.composite.getDisplay().getSystemColor( SWT.COLOR_DARK_GREEN ) );
+				// label.pack();
+				
+				scroll.setContent(label);
+				scroll.setMinSize(label.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+				
+				scroll.layout();*/
+			}
+
+			@Override
+			public void fileClosed(File file) {
+				System.out.println("FILE CLOSED: " + file);
+			}
+			
+			@Override
+			public void fileSaved(File file) {
+				// TODO reload file
+			}
+		};
+		
+		service.addListener(listener);
+		
+		
+
+		Button button = new Button(viewArea, SWT.PUSH);
+		button.setText("Refresh");
+		button.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				System.out.println("SELECTED: " + e);
+				
+				if (MinimapView.this.composite != null) {
+					MinimapView.this.composite.dispose();
+				}
+				
+				initScrolledComposite(viewArea);
+				
+				listener.fileOpened(service.getOpenedFile());
+				
+				viewArea.layout();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) { /* NO-OP */ }
+		});
+		
+		initScrolledComposite(viewArea);
+		
+		File openedFile = service.getOpenedFile();
+		if (openedFile != null) {
+			listener.fileOpened(openedFile);
+		}
+	}
+	
+	private void initScrolledComposite(Composite root) {
+		StringBuilder temp = new StringBuilder();
+		for(int i = 0; i < 200; i++) {
+			temp.append("Very very very very very very long line\n");
+		}
+
+
+		ScrolledComposite scroll = new ScrolledComposite(root, SWT.V_SCROLL);
+		scroll.setLayout(new RowLayout(SWT.HORIZONTAL));
+//		scroll.setExpandHorizontal(true);
+//		scroll.setMinSize(100, 100);
+
+		Label label = new Label(scroll, SWT.NONE);
+		label.setText(temp.toString());
+//		label.setBackground( this.composite.getDisplay().getSystemColor( SWT.COLOR_DARK_GREEN ) );
+//		label.pack();
+		
+		scroll.setContent(label);
+		scroll.setMinSize(label.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		
+		scroll.layout();
+
+		
+		this.composite = scroll;
 	}
 	
 	

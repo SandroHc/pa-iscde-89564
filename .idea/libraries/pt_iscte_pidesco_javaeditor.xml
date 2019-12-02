@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="pt.iscte.pidesco.javaeditor">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../pidesco/pt.iscte.pidesco.javaeditor" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../pidesco/pt.iscte.pidesco.javaeditor/src" />
+    </SOURCES>
+  </library>
+</component>
