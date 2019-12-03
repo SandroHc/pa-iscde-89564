@@ -60,7 +60,7 @@ public class MinimapView implements PidescoView {
 
 	@Override
 	public void createContents(Composite viewArea, Map<String, Image> images) {
-		viewArea.setLayout(new RowLayout(SWT.HORIZONTAL));
+		viewArea.setLayout(new RowLayout(SWT.VERTICAL));
 		
 		
 		BundleContext context = Activator.getContext();
@@ -120,13 +120,9 @@ public class MinimapView implements PidescoView {
 			public void widgetSelected(SelectionEvent e) {
 				System.out.println("SELECTED: " + e);
 				
-				if (MinimapView.this.composite != null) {
-					MinimapView.this.composite.dispose();
-				}
-				
 				initScrolledComposite(viewArea);
 				
-				listener.fileOpened(service.getOpenedFile());
+				// listener.fileOpened(service.getOpenedFile());
 				
 				viewArea.layout();
 			}
@@ -146,25 +142,28 @@ public class MinimapView implements PidescoView {
 	private void initScrolledComposite(Composite root) {
 		StringBuilder temp = new StringBuilder();
 		for(int i = 0; i < 200; i++) {
-			temp.append("Very very very very very very long line\n");
+			temp.append("Very very very very very very very very very very very very very very very very very very very very very very very very long line\n");
 		}
 
+		// Removes the previous composite, if any
+		if (this.composite != null) {
+			this.composite.dispose();
+		}
 
 		ScrolledComposite scroll = new ScrolledComposite(root, SWT.V_SCROLL);
-		scroll.setLayout(new RowLayout(SWT.HORIZONTAL));
-//		scroll.setExpandHorizontal(true);
-//		scroll.setMinSize(100, 100);
+		scroll.setLayout(new RowLayout(SWT.VERTICAL));
+		scroll.setExpandHorizontal(true);
 
 		Label label = new Label(scroll, SWT.NONE);
 		label.setText(temp.toString());
 //		label.setBackground( this.composite.getDisplay().getSystemColor( SWT.COLOR_DARK_GREEN ) );
-//		label.pack();
+		label.pack();
 		
 		scroll.setContent(label);
-		scroll.setMinSize(label.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		
-		scroll.layout();
-
+		Point p = label.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		scroll.setMinHeight(p.y);
+//		scroll.setMinSize(label.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		
 		this.composite = scroll;
 	}
