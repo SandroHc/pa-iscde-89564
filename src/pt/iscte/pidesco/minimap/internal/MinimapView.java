@@ -6,6 +6,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Map;
 
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.Javadoc;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.ModuleDeclaration;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
@@ -73,6 +82,9 @@ public class MinimapView implements PidescoView {
 			public void fileOpened(File file) {
 				System.out.println("FILE OPENED: " + file);
 				ScrolledComposite scroll = MinimapView.this.composite;
+
+
+				service.parseFile(file, new MyVisitor(file));
 				
 				return;/*				
 				String contents;
@@ -167,6 +179,71 @@ public class MinimapView implements PidescoView {
 		
 		this.composite = scroll;
 	}
-	
+
+	private static class MyVisitor extends ASTVisitor {
+
+		private final File file;
+
+		public MyVisitor(File file) {
+			this.file = file;
+		}
+
+		@Override
+		public boolean visit(Block node) {
+			int start = node.getStartPosition();
+			int end = start + node.getLength();
+
+			CompilationUnit cu = (CompilationUnit) node.getRoot();
+			int lineStart = cu.getLineNumber(start);
+			int lineEnd   = cu.getLineNumber(end);
+			
+			return super.visit(node);
+		}
+
+		@Override
+		public boolean visit(FieldDeclaration node) {
+			return super.visit(node);
+		}
+
+		@Override
+		public boolean visit(Javadoc node) {
+			return super.visit(node);
+		}
+
+		@Override
+		public boolean visit(MethodDeclaration node) {
+			return super.visit(node);
+		}
+
+		@Override
+		public boolean visit(ModuleDeclaration node) {
+			return super.visit(node);
+		}
+
+		@Override
+		public boolean visit(SingleVariableDeclaration node) {
+			return super.visit(node);
+		}
+
+		@Override
+		public boolean visit(TypeDeclaration node) {
+			return super.visit(node);
+		}
+
+		@Override
+		public void endVisit(Block node) {
+			super.endVisit(node);
+		}
+
+		@Override
+		public void endVisit(FieldDeclaration node) {
+			super.endVisit(node);
+		}
+
+		@Override
+		public void endVisit(Javadoc node) {
+			super.endVisit(node);
+		}
+	}
 	
 }
