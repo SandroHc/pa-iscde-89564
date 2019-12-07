@@ -16,14 +16,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.RowLayout;
@@ -41,6 +38,7 @@ import pt.iscte.pidesco.minimap.internal.parser.LineTest;
 
 public class MinimapView implements PidescoView {
 
+	private static final Logger LOGGER = Logger.getLogger(MinimapView.class);
 	public static final String VIEW_ID = "pt.iscte.pidesco.minimap.minimap";
 
 	/** the current instance for the plugin view */
@@ -59,6 +57,7 @@ public class MinimapView implements PidescoView {
 	}
 	
 	private void loadFilters() {
+//		LOGGER.info("Filters loaded");
 //		IExtensionRegistry reg = Platform.getExtensionRegistry();
 //		for(IExtension ext : reg.getExtensionPoint(EXT_POINT_FILTER).getExtensions()) {
 //			
@@ -86,14 +85,14 @@ public class MinimapView implements PidescoView {
 		JavaEditorListener listener = new JavaEditorListener() {
 			@Override
 			public void fileOpened(File file) {
-				System.out.println("FILE OPENED: " + file);
+				LOGGER.debug("File opened: " + file);
 				ScrolledComposite scroll = MinimapView.this.composite;
 
 				// TODO: do this in a worker thread
 				Collection<LineTest> lines = new FileTest(file).parse(service);
 
 				for (LineTest line : lines) {
-					System.out.println(line);
+					LOGGER.debug(line);
 				}
 
 				String linesStr = lines.stream()
@@ -131,12 +130,12 @@ public class MinimapView implements PidescoView {
 
 			@Override
 			public void fileClosed(File file) {
-				System.out.println("FILE CLOSED: " + file);
+				LOGGER.debug("File closed: " + file);
 			}
 			
 			@Override
 			public void fileSaved(File file) {
-				System.out.println("FILE SAVED: " + file);
+				LOGGER.debug("File saved: " + file);
 				// TODO reload/reparse file
 			}
 		};
@@ -154,8 +153,8 @@ public class MinimapView implements PidescoView {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				System.out.println("SELECTED: " + e);
-				
+				LOGGER.debug("Refresh clicked: " + e);
+
 				initScrolledComposite(viewArea, temp.toString());
 				
 				// listener.fileOpened(service.getOpenedFile());

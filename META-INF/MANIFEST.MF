@@ -17,4 +17,5 @@ Require-Bundle: pt.iscte.pidesco;bundle-version="0.1.0",
  org.eclipse.equinox.registry,
  pt.iscte.pidesco.javaeditor;bundle-version="1.1.0",
  org.eclipse.jdt.core,
- org.apache.commons.lang3;bundle-version="3.1.0"
+ org.apache.commons.lang3;bundle-version="3.1.0",
+ org.apache.log4j
