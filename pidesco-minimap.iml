@@ -19,6 +19,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="pt.iscte.pidesco" level="project" />
     <orderEntry type="library" name="pt.iscte.pidesco.javaeditor" level="project" />
-    <orderEntry type="library" name="pt.iscte.pidesco.projectbrowser" level="project" />
+    <orderEntry type="library" name="org.apache.commons:commons-lang3:3.1" level="project" />
   </component>
 </module>

@@ -1,30 +1,34 @@
+/*
+ * Copyright (c) 2019.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Authors:
+ *  - Sandro Marques <https://sandrohc.net>
+ */
+
 package pt.iscte.pidesco.minimap.internal;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.FieldDeclaration;
-import org.eclipse.jdt.core.dom.Javadoc;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.ModuleDeclaration;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -32,6 +36,8 @@ import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorListener;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 import pt.iscte.pidesco.minimap.Activator;
+import pt.iscte.pidesco.minimap.internal.parser.FileTest;
+import pt.iscte.pidesco.minimap.internal.parser.LineTest;
 
 public class MinimapView implements PidescoView {
 
@@ -83,30 +89,44 @@ public class MinimapView implements PidescoView {
 				System.out.println("FILE OPENED: " + file);
 				ScrolledComposite scroll = MinimapView.this.composite;
 
+				// TODO: do this in a worker thread
+				Collection<LineTest> lines = new FileTest(file).parse(service);
 
-				service.parseFile(file, new MyVisitor(file));
-				
-				return;/*				
-				String contents;
-				try {
-					contents = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
-				} catch (IOException e) {
-					contents = "Error loading file: " + file;
-					e.printStackTrace();
+				for (LineTest line : lines) {
+					System.out.println(line);
 				}
 
-				// contents.split("\n")
-				
-				
-				Label label = new Label(MinimapView.this.composite, SWT.NONE);
-				label.setText(contents);
-				// label.setBackground( this.composite.getDisplay().getSystemColor( SWT.COLOR_DARK_GREEN ) );
-				// label.pack();
-				
-				scroll.setContent(label);
-				scroll.setMinSize(label.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-				
-				scroll.layout();*/
+				String linesStr = lines.stream()
+						.map(line -> line.lineContent)
+						.collect(Collectors.joining(System.lineSeparator()));
+
+				initScrolledComposite(scroll, linesStr);
+
+
+//				StyledText text = new StyledText(scroll, SWT.BORDER);
+//				text.setText("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+//
+//				FontData data = text.getFont().getFontData()[0];
+//				Font font1 = new Font(scroll.getDisplay(), data.getName(), data.getHeight(), data.getStyle());
+//
+//				StyleRange style1 = new StyleRange();
+//				style1.start = 0;
+//				style1.length = 10;
+//				style1.fontStyle = SWT.BOLD;
+//				style1.font = font1;
+//				style1.background = Colors.PURPLE;
+//				text.setStyleRange(style1);
+
+
+//				Label label = new Label(scroll, SWT.NONE);
+//				label.setText(linesStr);
+//				// label.setBackground(scroll.getDisplay().getSystemColor( SWT.COLOR_DARK_GREEN ) );
+//				// label.pack();
+//
+//				scroll.setContent(label);
+//				scroll.setMinSize(label.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+//
+//				scroll.layout();
 			}
 
 			@Override
@@ -116,13 +136,17 @@ public class MinimapView implements PidescoView {
 			
 			@Override
 			public void fileSaved(File file) {
-				// TODO reload file
+				System.out.println("FILE SAVED: " + file);
+				// TODO reload/reparse file
 			}
 		};
 		
 		service.addListener(listener);
-		
-		
+
+
+		StringBuilder temp = new StringBuilder();
+		for(int i = 0; i < 200; i++)
+			temp.append("Very very very very very very very very very very very very very very very very very very very very very very very very long line\n");
 
 		Button button = new Button(viewArea, SWT.PUSH);
 		button.setText("Refresh");
@@ -132,7 +156,7 @@ public class MinimapView implements PidescoView {
 			public void widgetSelected(SelectionEvent e) {
 				System.out.println("SELECTED: " + e);
 				
-				initScrolledComposite(viewArea);
+				initScrolledComposite(viewArea, temp.toString());
 				
 				// listener.fileOpened(service.getOpenedFile());
 				
@@ -142,8 +166,8 @@ public class MinimapView implements PidescoView {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) { /* NO-OP */ }
 		});
-		
-		initScrolledComposite(viewArea);
+
+		initScrolledComposite(viewArea, temp.toString());
 		
 		File openedFile = service.getOpenedFile();
 		if (openedFile != null) {
@@ -151,11 +175,8 @@ public class MinimapView implements PidescoView {
 		}
 	}
 	
-	private void initScrolledComposite(Composite root) {
-		StringBuilder temp = new StringBuilder();
-		for(int i = 0; i < 200; i++) {
-			temp.append("Very very very very very very very very very very very very very very very very very very very very very very very very long line\n");
-		}
+	private void initScrolledComposite(Composite root, String lines) {
+
 
 		// Removes the previous composite, if any
 		if (this.composite != null) {
@@ -167,7 +188,7 @@ public class MinimapView implements PidescoView {
 		scroll.setExpandHorizontal(true);
 
 		Label label = new Label(scroll, SWT.NONE);
-		label.setText(temp.toString());
+		label.setText(lines);
 //		label.setBackground( this.composite.getDisplay().getSystemColor( SWT.COLOR_DARK_GREEN ) );
 		label.pack();
 		
@@ -180,70 +201,4 @@ public class MinimapView implements PidescoView {
 		this.composite = scroll;
 	}
 
-	private static class MyVisitor extends ASTVisitor {
-
-		private final File file;
-
-		public MyVisitor(File file) {
-			this.file = file;
-		}
-
-		@Override
-		public boolean visit(Block node) {
-			int start = node.getStartPosition();
-			int end = start + node.getLength();
-
-			CompilationUnit cu = (CompilationUnit) node.getRoot();
-			int lineStart = cu.getLineNumber(start);
-			int lineEnd   = cu.getLineNumber(end);
-			
-			return super.visit(node);
-		}
-
-		@Override
-		public boolean visit(FieldDeclaration node) {
-			return super.visit(node);
-		}
-
-		@Override
-		public boolean visit(Javadoc node) {
-			return super.visit(node);
-		}
-
-		@Override
-		public boolean visit(MethodDeclaration node) {
-			return super.visit(node);
-		}
-
-		@Override
-		public boolean visit(ModuleDeclaration node) {
-			return super.visit(node);
-		}
-
-		@Override
-		public boolean visit(SingleVariableDeclaration node) {
-			return super.visit(node);
-		}
-
-		@Override
-		public boolean visit(TypeDeclaration node) {
-			return super.visit(node);
-		}
-
-		@Override
-		public void endVisit(Block node) {
-			super.endVisit(node);
-		}
-
-		@Override
-		public void endVisit(FieldDeclaration node) {
-			super.endVisit(node);
-		}
-
-		@Override
-		public void endVisit(Javadoc node) {
-			super.endVisit(node);
-		}
-	}
-	
 }
