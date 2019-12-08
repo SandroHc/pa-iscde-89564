@@ -24,6 +24,7 @@ import pt.iscte.pidesco.minimap.service.constants.Styles;
 
 public class MinimapLine {
 
+	public final int lineStartingOffset;
 	public final int lineNumber;
 	public final String lineContent;
 
@@ -33,7 +34,8 @@ public class MinimapLine {
 	public String icon		= null;
 	public final Collection<String> tooltips = new ArrayList<>(0);
 
-	public MinimapLine(int lineNumber, String lineContent) {
+	public MinimapLine(int offset, int lineNumber, String lineContent) {
+		this.lineStartingOffset = offset;
 		this.lineNumber = lineNumber;
 		this.lineContent = lineContent;
 	}

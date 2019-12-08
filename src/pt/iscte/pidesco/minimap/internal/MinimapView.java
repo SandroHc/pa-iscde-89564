@@ -40,7 +40,7 @@ public class MinimapView implements PidescoView {
 	private static final Logger LOGGER = Logger.getLogger(MinimapView.class);
 	public static final String VIEW_ID = "pt.iscte.pidesco.minimap.minimap";
 
-	public static final MinimapLine EMPTY_LINE = new MinimapLine(1, "No file opened.");
+	public static final MinimapLine EMPTY_LINE = new MinimapLine(0, 1, "No file opened.");
 	public static final List<MinimapLine> EMPTY_LINE_LIST = Collections.singletonList(EMPTY_LINE);
 
 	/** the current instance for the plugin view */
@@ -166,8 +166,8 @@ public class MinimapView implements PidescoView {
 			Label label = MinimapLine.createLabel(line, group);
 			label.addMouseListener(
 					new ButtonClicked(() -> {
-						LOGGER.debug("Label clicked");
-//						javaEditorServices.selectText();
+						LOGGER.info("Navigating to line " + line.lineNumber + " on offset " + line.lineStartingOffset);
+						javaEditorServices.selectText(javaEditorServices.getOpenedFile(), line.lineStartingOffset, 0);
 					})
 			);
 		}

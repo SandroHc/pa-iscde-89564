@@ -49,10 +49,13 @@ public class MinimapFile {
 		String[] lines = contents.split(System.lineSeparator());
 		List<MinimapLine> list = new ArrayList<>(lines.length);
 
+		final int newlineOffset = System.lineSeparator().length();
+		int offset = 0;
 		for (int num = 1; num <= lines.length; num++) {
 			String content = lines[num-1];
-			MinimapLine line = new MinimapLine(num, content);
+			MinimapLine line = new MinimapLine(offset, num, content);
 
+			offset += content.length() + newlineOffset;
 			list.add(line);
 		}
 
