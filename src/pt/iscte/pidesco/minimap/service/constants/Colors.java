@@ -17,18 +17,18 @@ import org.eclipse.swt.widgets.Display;
 @SuppressWarnings("unused")
 public class Colors {
 
-	public static final Color WHITE       = fromRGB(255, 255, 255, 255);
-	public static final Color YELLOW      = fromRGB(253, 230,  75, 255);
-	public static final Color ORANGE      = fromRGB(237, 112,  20, 255);
-	public static final Color RED         = fromRGB(208,  49,  45, 255);
-	public static final Color PINK        = fromRGB(250, 134, 197, 255);
-	public static final Color PURPLE      = fromRGB(227, 159, 246, 255);
-	public static final Color BLUE        = fromRGB( 58,  67, 186, 255);
-	public static final Color GREEN       = fromRGB( 59, 177,  67, 255);
-	public static final Color BROWN       = fromRGB( 75,  55,  28, 255);
-	public static final Color GRAY        = fromRGB(108,  98, 109, 255);
-	public static final Color BLACK       = fromRGB(  3,   1,   6, 255);
-	public static final Color TRANSPARENT = fromRGB(  0,   0,   0,   0);
+	public static final Color WHITE       = fromRGB(255, 255, 255, 1);
+	public static final Color RED         = fromHSB(  0, 0.30F, 1.00F, 1F);
+	public static final Color ORANGE      = fromHSB( 25, 0.30F, 1.00F, 1F);
+	public static final Color BROWN       = fromHSB( 34, 0.30F, 1.00F, 1F);
+	public static final Color YELLOW      = fromHSB( 52, 0.30F, 1.00F, 1F);
+	public static final Color GREEN       = fromHSB(128, 0.30F, 1.00F, 1F);
+	public static final Color BLUE        = fromHSB(236, 0.30F, 1.00F, 1F);
+	public static final Color PURPLE      = fromHSB(287, 0.30F, 1.00F, 1F);
+	public static final Color PINK        = fromHSB(330, 0.30F, 1.00F, 1F);
+	public static final Color GRAY        = fromHSB(  0, 0.00F, 0.96F, 1F);
+	public static final Color BLACK       = fromHSB(265, 0.83F, 0.2F, 1F);
+	public static final Color TRANSPARENT = fromRGB(  0,   0,   0, 0);
 
 
 	private Colors() { }
@@ -37,4 +37,8 @@ public class Colors {
 		return new Color(Display.getDefault(), r, g, b, a);
 	}
 
+	public static Color fromHSB(float h, float s, float b, float a) {
+		java.awt.Color color = java.awt.Color.getHSBColor(h / 360F, s, b);
+		return fromRGB(color.getRed(), color.getGreen(), color.getBlue(), Math.round(a * 255));
+	}
 }
