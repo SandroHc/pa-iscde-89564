@@ -16,15 +16,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.osgi.framework.BundleContext;
@@ -43,9 +39,12 @@ public class MinimapView implements PidescoView {
 
 	/** the current instance for the plugin view */
 	private static MinimapView instance;
-	
-	private ScrolledComposite composite;
-	
+
+	// SWT Components
+	private Composite root;
+	private ScrolledComposite scroll;
+
+
 	public MinimapView() {
 		instance = this;
 
@@ -74,9 +73,8 @@ public class MinimapView implements PidescoView {
 
 	@Override
 	public void createContents(Composite viewArea, Map<String, Image> images) {
-		viewArea.setLayout(new RowLayout(SWT.VERTICAL));
-		
-		
+		this.root = viewArea;
+
 		BundleContext context = Activator.getContext();
 
 		ServiceReference<JavaEditorServices> serviceReference = context.getServiceReference(JavaEditorServices.class);
@@ -86,20 +84,15 @@ public class MinimapView implements PidescoView {
 			@Override
 			public void fileOpened(File file) {
 				LOGGER.debug("File opened: " + file);
-				ScrolledComposite scroll = MinimapView.this.composite;
 
 				// TODO: do this in a worker thread
 				Collection<LineTest> lines = new FileTest(file).parse(service);
-
-				for (LineTest line : lines) {
-					LOGGER.debug(line);
-				}
 
 				String linesStr = lines.stream()
 						.map(line -> line.lineContent)
 						.collect(Collectors.joining(System.lineSeparator()));
 
-				initScrolledComposite(scroll, linesStr);
+				createScrollComponent(linesStr);
 
 
 //				StyledText text = new StyledText(scroll, SWT.BORDER);
@@ -123,9 +116,6 @@ public class MinimapView implements PidescoView {
 //				// label.pack();
 //
 //				scroll.setContent(label);
-//				scroll.setMinSize(label.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-//
-//				scroll.layout();
 			}
 
 			@Override
@@ -145,28 +135,9 @@ public class MinimapView implements PidescoView {
 
 		StringBuilder temp = new StringBuilder();
 		for(int i = 0; i < 200; i++)
-			temp.append("Very very very very very very very very very very very very very very very very very very very very very very very very long line\n");
+			temp.append(StringUtils.leftPad("" + i, 3)).append(". Very very very very very very very very very very very very very very very long line\n");
 
-		Button button = new Button(viewArea, SWT.PUSH);
-		button.setText("Refresh");
-		button.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				LOGGER.debug("Refresh clicked: " + e);
-
-				initScrolledComposite(viewArea, temp.toString());
-				
-				// listener.fileOpened(service.getOpenedFile());
-				
-				viewArea.layout();
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) { /* NO-OP */ }
-		});
-
-		initScrolledComposite(viewArea, temp.toString());
+		createScrollComponent(temp.toString());
 		
 		File openedFile = service.getOpenedFile();
 		if (openedFile != null) {
@@ -174,30 +145,29 @@ public class MinimapView implements PidescoView {
 		}
 	}
 	
-	private void initScrolledComposite(Composite root, String lines) {
+	private void createScrollComponent(String content) {
+		// https://www.codeaffine.com/2016/03/01/swt-scrolledcomposite
 
+		if (this.scroll == null || this.scroll.isDisposed()) {
+			// Create a new ScrolledComposite
+			LOGGER.debug("Creating new ScrolledComposite");
 
-		// Removes the previous composite, if any
-		if (this.composite != null) {
-			this.composite.dispose();
+			ScrolledComposite scroll = new ScrolledComposite(this.root, SWT.V_SCROLL);
+			scroll.setBackground(this.root.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+			scroll.setExpandHorizontal(true);
+			this.scroll = scroll;
+		} else if (this.scroll.getContent() != null && !this.scroll.getContent().isDisposed()) {
+			// Remove the ScrolledComposite children
+			LOGGER.debug("Removing ScrolledComposite content");
+
+			this.scroll.getContent().dispose();
 		}
 
-		ScrolledComposite scroll = new ScrolledComposite(root, SWT.V_SCROLL);
-		scroll.setLayout(new RowLayout(SWT.VERTICAL));
-		scroll.setExpandHorizontal(true);
-
 		Label label = new Label(scroll, SWT.NONE);
-		label.setText(lines);
-//		label.setBackground( this.composite.getDisplay().getSystemColor( SWT.COLOR_DARK_GREEN ) );
+		label.setText(content);
+		label.setBackground(this.root.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 		label.pack();
-		
 		scroll.setContent(label);
-		
-		Point p = label.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		scroll.setMinHeight(p.y);
-//		scroll.setMinSize(label.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		
-		this.composite = scroll;
 	}
 
 }
