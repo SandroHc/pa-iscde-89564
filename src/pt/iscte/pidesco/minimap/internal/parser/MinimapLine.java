@@ -18,9 +18,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.eclipse.swt.graphics.Color;
-import pt.iscte.pidesco.minimap.internal.Styles;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import pt.iscte.pidesco.minimap.service.constants.Styles;
 
-public class LineTest {
+public class MinimapLine {
 
 	public final int lineNumber;
 	public final String lineContent;
@@ -31,9 +33,29 @@ public class LineTest {
 	public String icon		= null;
 	public final Collection<String> tooltips = new ArrayList<>(0);
 
-	public LineTest(int lineNumber, String lineContent) {
+	public MinimapLine(int lineNumber, String lineContent) {
 		this.lineNumber = lineNumber;
 		this.lineContent = lineContent;
+	}
+
+	public static Label createLabel(MinimapLine line, Composite parent) {
+		Label label = new Label(parent, line.style);
+		label.setText(line.lineContent);
+
+		if (line.foreground != null) {
+			label.setForeground(line.foreground);
+		}
+
+		if (line.background != null) {
+			label.setBackground(line.background);
+		}
+
+		if (!line.tooltips.isEmpty()) {
+			String tooltips = String.join("\n", line.tooltips);
+			label.setToolTipText(tooltips);
+		}
+
+		return label;
 	}
 
 	@Override
@@ -41,9 +63,9 @@ public class LineTest {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		LineTest lineTest = (LineTest) o;
+		MinimapLine minimapLine = (MinimapLine) o;
 
-		return lineNumber == lineTest.lineNumber;
+		return lineNumber == minimapLine.lineNumber;
 	}
 
 	@Override

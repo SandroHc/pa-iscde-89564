@@ -13,13 +13,12 @@ package pt.iscte.pidesco.minimap.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.swt.graphics.Color;
-import pt.iscte.pidesco.minimap.internal.Colors;
-import pt.iscte.pidesco.minimap.internal.Styles;
+import pt.iscte.pidesco.minimap.service.constants.Colors;
+import pt.iscte.pidesco.minimap.service.constants.Styles;
 
 public class FileEventImpl<N extends ASTNode> implements FileEvent<N> {
 

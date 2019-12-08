@@ -13,15 +13,17 @@ package pt.iscte.pidesco.minimap.internal;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -29,24 +31,34 @@ import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorListener;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 import pt.iscte.pidesco.minimap.Activator;
-import pt.iscte.pidesco.minimap.internal.parser.FileTest;
-import pt.iscte.pidesco.minimap.internal.parser.LineTest;
+import pt.iscte.pidesco.minimap.internal.listeners.ButtonClicked;
+import pt.iscte.pidesco.minimap.internal.parser.MinimapFile;
+import pt.iscte.pidesco.minimap.internal.parser.MinimapLine;
 
 public class MinimapView implements PidescoView {
 
 	private static final Logger LOGGER = Logger.getLogger(MinimapView.class);
 	public static final String VIEW_ID = "pt.iscte.pidesco.minimap.minimap";
 
+	public static final MinimapLine EMPTY_LINE = new MinimapLine(1, "No file opened.");
+	public static final List<MinimapLine> EMPTY_LINE_LIST = Collections.singletonList(EMPTY_LINE);
+
 	/** the current instance for the plugin view */
 	private static MinimapView instance;
 
-	// SWT Components
+	private final JavaEditorServices javaEditorServices;
+
+	/* SWT Components */
 	private Composite root;
 	private ScrolledComposite scroll;
 
 
 	public MinimapView() {
 		instance = this;
+
+		BundleContext context = Activator.getContext();
+		ServiceReference<JavaEditorServices> serviceReference = context.getServiceReference(JavaEditorServices.class);
+		javaEditorServices = context.getService(serviceReference);
 
 		loadFilters();
 	}
@@ -75,24 +87,15 @@ public class MinimapView implements PidescoView {
 	public void createContents(Composite viewArea, Map<String, Image> images) {
 		this.root = viewArea;
 
-		BundleContext context = Activator.getContext();
-
-		ServiceReference<JavaEditorServices> serviceReference = context.getServiceReference(JavaEditorServices.class);
-		JavaEditorServices service = context.getService(serviceReference);
-
 		JavaEditorListener listener = new JavaEditorListener() {
 			@Override
 			public void fileOpened(File file) {
 				LOGGER.debug("File opened: " + file);
 
 				// TODO: do this in a worker thread
-				Collection<LineTest> lines = new FileTest(file).parse(service);
+				Collection<MinimapLine> lines = new MinimapFile(file).parse(javaEditorServices);
 
-				String linesStr = lines.stream()
-						.map(line -> line.lineContent)
-						.collect(Collectors.joining(System.lineSeparator()));
-
-				createScrollComponent(linesStr);
+				createScrollComponent(lines);
 
 
 //				StyledText text = new StyledText(scroll, SWT.BORDER);
@@ -108,14 +111,6 @@ public class MinimapView implements PidescoView {
 //				style1.font = font1;
 //				style1.background = Colors.PURPLE;
 //				text.setStyleRange(style1);
-
-
-//				Label label = new Label(scroll, SWT.NONE);
-//				label.setText(linesStr);
-//				// label.setBackground(scroll.getDisplay().getSystemColor( SWT.COLOR_DARK_GREEN ) );
-//				// label.pack();
-//
-//				scroll.setContent(label);
 			}
 
 			@Override
@@ -129,23 +124,18 @@ public class MinimapView implements PidescoView {
 				// TODO reload/reparse file
 			}
 		};
-		
-		service.addListener(listener);
 
+		javaEditorServices.addListener(listener);
 
-		StringBuilder temp = new StringBuilder();
-		for(int i = 0; i < 200; i++)
-			temp.append(StringUtils.leftPad("" + i, 3)).append(". Very very very very very very very very very very very very very very very long line\n");
-
-		createScrollComponent(temp.toString());
-		
-		File openedFile = service.getOpenedFile();
+		File openedFile = javaEditorServices.getOpenedFile();
 		if (openedFile != null) {
 			listener.fileOpened(openedFile);
+		} else {
+			createScrollComponent(EMPTY_LINE_LIST);
 		}
 	}
 	
-	private void createScrollComponent(String content) {
+	private void createScrollComponent(Collection<MinimapLine> lines) {
 		// https://www.codeaffine.com/2016/03/01/swt-scrolledcomposite
 
 		if (this.scroll == null || this.scroll.isDisposed()) {
@@ -163,11 +153,27 @@ public class MinimapView implements PidescoView {
 			this.scroll.getContent().dispose();
 		}
 
-		Label label = new Label(scroll, SWT.NONE);
-		label.setText(content);
-		label.setBackground(this.root.getDisplay().getSystemColor(SWT.COLOR_GREEN));
-		label.pack();
-		scroll.setContent(label);
+		// https://www.eclipse.org/articles/Article-Understanding-Layouts/Understanding-Layouts.htm
+		RowLayout layout = new RowLayout(SWT.VERTICAL);
+		layout.fill = true;
+//		layout.spacing = 0;
+//		layout.marginTop = 0;
+
+		Group group = new Group(scroll, SWT.SHADOW_NONE);
+		group.setLayout(layout);
+
+		for (MinimapLine line : lines) {
+			Label label = MinimapLine.createLabel(line, group);
+			label.addMouseListener(
+					new ButtonClicked(() -> {
+						LOGGER.debug("Label clicked");
+//						javaEditorServices.selectText();
+					})
+			);
+		}
+
+		group.pack();
+		scroll.setContent(group);
 	}
 
 }

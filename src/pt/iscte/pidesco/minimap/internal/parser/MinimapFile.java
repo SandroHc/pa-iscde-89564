@@ -21,22 +21,22 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.eclipse.jdt.core.dom.Block;
+import org.eclipse.jdt.core.dom.ASTNode;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
-import pt.iscte.pidesco.minimap.internal.Styles;
+import pt.iscte.pidesco.minimap.service.constants.Styles;
 import pt.iscte.pidesco.minimap.service.FileEvent;
 
-public class FileTest {
+public class MinimapFile {
 
 	public final File file;
-	public final List<LineTest> lines;
+	public final List<MinimapLine> lines;
 
-	public FileTest(File file) {
+	public MinimapFile(File file) {
 		this.file = file;
 		this.lines = loadLines(this.file.toPath());
 	}
 
-	private static List<LineTest> loadLines(Path path) {
+	private static List<MinimapLine> loadLines(Path path) {
 		String contents;
 		try {
 			byte[] bytes = Files.readAllBytes(path);
@@ -47,11 +47,11 @@ public class FileTest {
 		}
 
 		String[] lines = contents.split(System.lineSeparator());
-		List<LineTest> list = new ArrayList<>(lines.length);
+		List<MinimapLine> list = new ArrayList<>(lines.length);
 
 		for (int num = 1; num <= lines.length; num++) {
 			String content = lines[num-1];
-			LineTest line = new LineTest(num, content);
+			MinimapLine line = new MinimapLine(num, content);
 
 			list.add(line);
 		}
@@ -59,7 +59,7 @@ public class FileTest {
 		return list;
 	}
 
-	public Collection<LineTest> parse(JavaEditorServices services) {
+	public Collection<MinimapLine> parse(JavaEditorServices services) {
 		services.parseFile(file, new AstVisitor(this));
 		return this.lines;
 	}
@@ -71,7 +71,7 @@ public class FileTest {
 	 * @param to	The last line (inclusive)
 	 * @return range of lines
 	 */
-	public List<LineTest> getLines(int from, int to) {
+	public List<MinimapLine> getLines(int from, int to) {
 		// Ajust values to 0-based indexes
 		from -= 1;
 		to   -= 1;
@@ -83,11 +83,11 @@ public class FileTest {
 		return lines.subList(from, to + 1);
 	}
 
-	public void update(FileEvent<Block> event) {
-		List<LineTest> lines = getLines(event.getLineStart(), event.getLineEnd());
+	public <N extends ASTNode> void update(FileEvent<N> event) {
+		List<MinimapLine> lines = getLines(event.getLineStart(), event.getLineEnd());
 
 		boolean isFirstLine = true;
-		for (LineTest line : lines) {
+		for (MinimapLine line : lines) {
 			if (event.getForeground() != null) {
 				line.foreground = event.getForeground();
 			}

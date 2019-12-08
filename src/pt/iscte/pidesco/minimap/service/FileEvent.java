@@ -15,8 +15,8 @@ import java.util.Collection;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.swt.graphics.Color;
-import pt.iscte.pidesco.minimap.internal.Colors;
-import pt.iscte.pidesco.minimap.internal.Styles;
+import pt.iscte.pidesco.minimap.service.constants.Colors;
+import pt.iscte.pidesco.minimap.service.constants.Styles;
 
 public interface FileEvent<N extends ASTNode> {
 

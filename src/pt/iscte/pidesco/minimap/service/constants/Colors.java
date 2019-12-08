@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pt.iscte.pidesco.minimap.internal;
+package pt.iscte.pidesco.minimap.service.constants;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
