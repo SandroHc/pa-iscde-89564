@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pt.iscte.pidesco.minimap.internal.parser;
+package pa.iscde.minimap.internal.parser;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -41,9 +41,9 @@ import org.eclipse.jdt.core.dom.SwitchExpression;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.swt.graphics.Color;
-import pt.iscte.pidesco.minimap.service.constants.Colors;
-import pt.iscte.pidesco.minimap.service.FileEvent;
-import pt.iscte.pidesco.minimap.service.FileEventImpl;
+import pa.iscde.minimap.service.FileEvent;
+import pa.iscde.minimap.service.FileEventImpl;
+import pa.iscde.minimap.service.constants.Colors;
 
 // TODO: um visitor por extensão (permite que a extensão termine os visitors)? ou um visitor partilhado por todas as extensões?
 public class AstVisitor extends ASTVisitor {

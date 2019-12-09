@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pt.iscte.pidesco.minimap;
+package pa.iscde.minimap;
 
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.FileAppender;

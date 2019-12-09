@@ -17,7 +17,7 @@
          name="Minimap"
          point="pt.iscte.pidesco.view">
       <view
-            class="pt.iscte.pidesco.minimap.internal.MinimapView"
+            class="pa.iscde.minimap.internal.MinimapView"
             icon="minimap.gif">
       </view>
    </extension>

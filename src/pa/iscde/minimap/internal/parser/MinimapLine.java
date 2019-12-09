@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pt.iscte.pidesco.minimap.internal.parser;
+package pa.iscde.minimap.internal.parser;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +20,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import pt.iscte.pidesco.minimap.service.constants.Styles;
+import pa.iscde.minimap.service.constants.Styles;
 
 public class MinimapLine {
 

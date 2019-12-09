@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pt.iscte.pidesco.minimap.service;
+package pa.iscde.minimap.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,8 +17,8 @@ import java.util.Collection;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.swt.graphics.Color;
-import pt.iscte.pidesco.minimap.service.constants.Colors;
-import pt.iscte.pidesco.minimap.service.constants.Styles;
+import pa.iscde.minimap.service.constants.Colors;
+import pa.iscde.minimap.service.constants.Styles;
 
 public class FileEventImpl<N extends ASTNode> implements FileEvent<N> {
 

@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pt.iscte.pidesco.minimap.internal.parser;
+package pa.iscde.minimap.internal.parser;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,8 +23,8 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 import org.eclipse.jdt.core.dom.ASTNode;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
-import pt.iscte.pidesco.minimap.service.constants.Styles;
-import pt.iscte.pidesco.minimap.service.FileEvent;
+import pa.iscde.minimap.service.constants.Styles;
+import pa.iscde.minimap.service.FileEvent;
 
 public class MinimapFile {
 

@@ -1,4 +1,4 @@
-package pt.iscte.pidesco.minimap.internal.listeners;
+package pa.iscde.minimap.internal.listeners;
 
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;

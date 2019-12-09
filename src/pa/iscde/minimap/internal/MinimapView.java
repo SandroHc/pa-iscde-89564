@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pt.iscte.pidesco.minimap.internal;
+package pa.iscde.minimap.internal;
 
 import java.io.File;
 import java.util.Collection;
@@ -27,13 +27,13 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import pa.iscde.minimap.internal.parser.MinimapFile;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorListener;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
-import pt.iscte.pidesco.minimap.Activator;
-import pt.iscte.pidesco.minimap.internal.listeners.ButtonClicked;
-import pt.iscte.pidesco.minimap.internal.parser.MinimapFile;
-import pt.iscte.pidesco.minimap.internal.parser.MinimapLine;
+import pa.iscde.minimap.Activator;
+import pa.iscde.minimap.internal.listeners.ButtonClicked;
+import pa.iscde.minimap.internal.parser.MinimapLine;
 
 public class MinimapView implements PidescoView {
 
