@@ -20,7 +20,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import pa.iscde.minimap.service.constants.Styles;
+import pa.iscde.minimap.utils.Styles;
 
 public class MinimapLine {
 

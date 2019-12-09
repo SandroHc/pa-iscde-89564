@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pa.iscde.minimap.service.constants;
+package pa.iscde.minimap.utils;
 
 import org.eclipse.swt.SWT;
 

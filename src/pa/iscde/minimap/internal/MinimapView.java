@@ -14,10 +14,14 @@ package pa.iscde.minimap.internal;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Image;
@@ -27,6 +31,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import pa.iscde.minimap.extensibility.MinimapInspection;
 import pa.iscde.minimap.internal.parser.MinimapFile;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorListener;
@@ -39,6 +44,7 @@ public class MinimapView implements PidescoView {
 
 	private static final Logger LOGGER = Logger.getLogger(MinimapView.class);
 	public static final String VIEW_ID = "pt.iscte.pidesco.minimap.minimap";
+	public static final String EXT_POINT_INSPECTION = "pt.iscte.pidesco.minimap.inspection";
 
 	public static final MinimapLine EMPTY_LINE = new MinimapLine(0, 1, "No file opened.");
 	public static final List<MinimapLine> EMPTY_LINE_LIST = Collections.singletonList(EMPTY_LINE);
@@ -47,6 +53,7 @@ public class MinimapView implements PidescoView {
 	private static MinimapView instance;
 
 	private final JavaEditorServices javaEditorServices;
+	private final Map<String, MinimapInspection> rules;
 
 	/* SWT Components */
 	private Composite root;
@@ -55,32 +62,36 @@ public class MinimapView implements PidescoView {
 
 	public MinimapView() {
 		instance = this;
+		rules = new HashMap<>();
 
 		BundleContext context = Activator.getContext();
 		ServiceReference<JavaEditorServices> serviceReference = context.getServiceReference(JavaEditorServices.class);
 		javaEditorServices = context.getService(serviceReference);
 
-		loadFilters();
+		loadInspections();
 	}
 
 	public static MinimapView getInstance() {
 		return instance;
 	}
 	
-	private void loadFilters() {
-//		LOGGER.info("Filters loaded");
-//		IExtensionRegistry reg = Platform.getExtensionRegistry();
-//		for(IExtension ext : reg.getExtensionPoint(EXT_POINT_FILTER).getExtensions()) {
-//			
-//			ProjectBrowserFilter f = null;
-//			try {
-//				f = (ProjectBrowserFilter) ext.getConfigurationElements()[0].createExecutableExtension("class");
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//			if(f != null)
-//				filtersMap.put(ext.getUniqueIdentifier(), new Filter(f));
-//		}
+	private void loadInspections() {
+		rules.clear();
+
+		IExtensionRegistry reg = Platform.getExtensionRegistry();
+		for(IExtension ext : reg.getExtensionPoint(EXT_POINT_INSPECTION).getExtensions()) {
+			try {
+				MinimapInspection i = (MinimapInspection) ext.getConfigurationElements()[0].createExecutableExtension("class");
+
+				rules.put(ext.getUniqueIdentifier(), i);
+			} catch (Exception e) {
+				LOGGER.error("Error loading extension '" + ext.getSimpleIdentifier() + "'", e);
+			}
+		}
+
+		rules.put("demo", new DemoInspection());
+
+		LOGGER.info("Loaded " + rules.size() + " inspection rules");
 	}
 
 	@Override
@@ -90,10 +101,11 @@ public class MinimapView implements PidescoView {
 		JavaEditorListener listener = new JavaEditorListener() {
 			@Override
 			public void fileOpened(File file) {
-				LOGGER.debug("File opened: " + file);
+				LOGGER.info("File opened: " + file);
 
 				// TODO: do this in a worker thread
-				Collection<MinimapLine> lines = new MinimapFile(file).parse(javaEditorServices);
+				// TODO: implement way to enable/disable rules
+				Collection<MinimapLine> lines = new MinimapFile(file).parse(javaEditorServices, rules.values());
 
 				createScrollComponent(lines);
 

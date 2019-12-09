@@ -11,14 +11,11 @@
 
 package pa.iscde.minimap.service;
 
-import java.util.Collection;
-
-import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.swt.graphics.Color;
-import pa.iscde.minimap.service.constants.Colors;
-import pa.iscde.minimap.service.constants.Styles;
+import pa.iscde.minimap.utils.Colors;
+import pa.iscde.minimap.utils.Styles;
 
-public interface FileEvent<N extends ASTNode> {
+public interface InspectionContext {
 
 	/**
 	 * Defines the foreground color for this statement.
@@ -27,7 +24,7 @@ public interface FileEvent<N extends ASTNode> {
 	 *
 	 * @see Colors for a list of some of the available colors
 	 */
-	void setForeground(Color color);
+	void setForeground(final Color color);
 
 	/**
 	 * Defines the background color for this statement.
@@ -36,7 +33,7 @@ public interface FileEvent<N extends ASTNode> {
 	 *
 	 * @see Colors for a list of some of the available colors
 	 */
-	void setBackground(Color color);
+	void setBackground(final Color color);
 
 	/**
 	 * Defines the style (bold, italic, etc.) for this statement.
@@ -45,39 +42,33 @@ public interface FileEvent<N extends ASTNode> {
 	 *
 	 * @see Styles for a list of some of the available styles
 	 */
-	void setStyle(int style);
+	void setStyle(final int style);
 
 	/**
 	 * Defines an icon for this statement.
 	 *
 	 * @param iconResource The icon resource
 	 */
-	void setIcon(String iconResource);
+	void setIcon(final String iconResource);
 
 	/**
 	 * Add tooltip for this statement.
 	 *
 	 * @param tooltip The tooltip
 	 */
-	void addTooltip(String tooltip);
+	void addTooltip(final String tooltip);
 
 	/**
 	 * Add tooltips for this statement.
 	 *
 	 * @param tooltips The tooltips
 	 */
-	void addTooltips(Iterable<String> tooltips);
+	void addTooltips(final Iterable<String> tooltips);
 
 	//<editor-fold desc="Getters" default-state="collaped">
 	int getPosStart();
 	int getPosEnd();
 	int getLineStart();
 	int getLineEnd();
-
-	Color getForeground();
-	Color getBackground();
-	int getStyle();
-	String getIcon();
-	Collection<String> getTooltips();
 	//</editor-fold>
 }

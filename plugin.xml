@@ -12,6 +12,7 @@
   -->
 
 <plugin>
+   <extension-point id="inspection" name="Minimap Inspection" schema="schema/pa.iscde.minimap.inspection.exsd"/>
    <extension
          id="minimap"
          name="Minimap"

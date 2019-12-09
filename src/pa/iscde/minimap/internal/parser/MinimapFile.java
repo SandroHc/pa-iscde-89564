@@ -21,12 +21,14 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.eclipse.jdt.core.dom.ASTNode;
+import org.apache.log4j.Logger;
+import pa.iscde.minimap.extensibility.MinimapInspection;
+import pa.iscde.minimap.internal.MinimapView;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
-import pa.iscde.minimap.service.constants.Styles;
-import pa.iscde.minimap.service.FileEvent;
 
 public class MinimapFile {
+
+	private static final Logger LOGGER = Logger.getLogger(MinimapFile.class);
 
 	public final File file;
 	public final List<MinimapLine> lines;
@@ -62,8 +64,17 @@ public class MinimapFile {
 		return list;
 	}
 
-	public Collection<MinimapLine> parse(JavaEditorServices services) {
-		services.parseFile(file, new AstVisitor(this));
+	/**
+	 * Parses the current file with the active inspection rules.
+	 *
+	 * @param services	Instance of the Java Editor services
+	 * @param rules		Active inspection rules
+	 * @return list of line with the rules' styles applied
+	 */
+	public Collection<MinimapLine> parse(JavaEditorServices services, Collection<MinimapInspection> rules) {
+		LOGGER.info("Parsing file '" + file.getName() + "' with " + rules.size() + " rules");
+
+		services.parseFile(file, new AstVisitor(this, rules));
 		return this.lines;
 	}
 
@@ -75,7 +86,7 @@ public class MinimapFile {
 	 * @return range of lines
 	 */
 	public List<MinimapLine> getLines(int from, int to) {
-		// Ajust values to 0-based indexes
+		// Adjust values to the 0-based indexes
 		from -= 1;
 		to   -= 1;
 
@@ -84,37 +95,5 @@ public class MinimapFile {
 		Validate.validIndex(this.lines, to);
 
 		return lines.subList(from, to + 1);
-	}
-
-	public <N extends ASTNode> void update(FileEvent<N> event) {
-		List<MinimapLine> lines = getLines(event.getLineStart(), event.getLineEnd());
-
-		boolean isFirstLine = true;
-		for (MinimapLine line : lines) {
-			if (event.getForeground() != null) {
-				line.foreground = event.getForeground();
-			}
-
-			if (event.getBackground() != null) {
-				line.background = event.getBackground();
-			}
-
-			if (event.getStyle() != Styles.NORMAL) {
-				line.style = event.getStyle();
-			}
-
-			// Apply these properties only to the first line
-			if (isFirstLine) {
-				if (event.getIcon() != null) {
-					line.icon = event.getIcon();
-				}
-
-				if (!event.getTooltips().isEmpty()) {
-					line.tooltips.addAll(event.getTooltips());
-				}
-
-				isFirstLine = false;
-			}
-		}
 	}
 }

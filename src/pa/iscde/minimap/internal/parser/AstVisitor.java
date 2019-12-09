@@ -11,6 +11,9 @@
 
 package pa.iscde.minimap.internal.parser;
 
+import java.util.Collection;
+
+import org.apache.log4j.Logger;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
@@ -40,187 +43,194 @@ import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchExpression;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.WhileStatement;
-import org.eclipse.swt.graphics.Color;
-import pa.iscde.minimap.service.FileEvent;
-import pa.iscde.minimap.service.FileEventImpl;
-import pa.iscde.minimap.service.constants.Colors;
+import pa.iscde.minimap.extensibility.MinimapInspection;
+import pa.iscde.minimap.internal.InspectionContextImpl;
 
 // TODO: um visitor por extensão (permite que a extensão termine os visitors)? ou um visitor partilhado por todas as extensões?
 public class AstVisitor extends ASTVisitor {
 
-	private final MinimapFile minimapFile;
+	private static final Logger LOGGER = Logger.getLogger(AstVisitor.class);
 
-	public AstVisitor(MinimapFile minimapFile) {
+	private final MinimapFile minimapFile;
+	private final Collection<MinimapInspection> rules;
+
+	public AstVisitor(MinimapFile minimapFile, Collection<MinimapInspection> rules) {
 		this.minimapFile = minimapFile;
+		this.rules = rules;
 	}
 
-	private static <N extends ASTNode> FileEvent<N> createEvent(N node, String tooltip, Color background) {
-		FileEventImpl<N> event = new FileEventImpl<>(node);
-		event.addTooltip(tooltip);
-		event.setBackground(background);
-		return event;
+	private void inspect(final ASTNode node) {
+		final InspectionContextImpl<ASTNode> context = new InspectionContextImpl<>(node, minimapFile);
+
+		for (MinimapInspection rule : rules) {
+			try {
+				rule.inspect(node, context);
+			} catch (Exception e) {
+				LOGGER.error("Error running inspection rule: " + rule.getClass().getName(), e);
+			}
+
+		}
 	}
 
 	@Override
 	public boolean visit(Block node) {
-		FileEvent<Block> event = createEvent(node, "BLOCK", Colors.PURPLE);
-		minimapFile.update(event);
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(FieldDeclaration node) {
-		minimapFile.update(createEvent(node, "FIELD DECLARATION", Colors.RED));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(Javadoc node) {
-		minimapFile.update(createEvent(node, "JAVADOC", Colors.GREEN));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(MethodDeclaration node) {
-		minimapFile.update(createEvent(node, "METHOD DECLARATION", Colors.ORANGE));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(MethodInvocation node) {
-		minimapFile.update(createEvent(node, "METHOD INVOCATION", Colors.ORANGE));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(SingleVariableDeclaration node) {
-		minimapFile.update(createEvent(node, "SINGLE VARIABLE DECLARATION", Colors.YELLOW));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(TypeDeclaration node) {
-		minimapFile.update(createEvent(node, "TYPE DECLARATION", Colors.WHITE));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(AnnotationTypeDeclaration node) {
-		minimapFile.update(createEvent(node, "ANOOTATION TYPE DECLARATION", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(AnonymousClassDeclaration node) {
-		minimapFile.update(createEvent(node, "ANONYMOUS CLASSE DECLARATION", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(ArrayAccess node) {
-		minimapFile.update(createEvent(node, "ARRAY ACCESS", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(ArrayCreation node) {
-		minimapFile.update(createEvent(node, "ARRAY CREATION", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(ArrayInitializer node) {
-		minimapFile.update(createEvent(node, "ARRAY INITIALIZER", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(BlockComment node) {
-		minimapFile.update(createEvent(node, "BLOCK COMMENT", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(LineComment node) {
-		minimapFile.update(createEvent(node, "LINE COMMENT", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(CreationReference node) {
-		minimapFile.update(createEvent(node, "CREATION REFERENCE", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(EnumConstantDeclaration node) {
-		minimapFile.update(createEvent(node, "ENUM CONSTANT DECLARATION", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(EnumDeclaration node) {
-		minimapFile.update(createEvent(node, "ENUM DECLARATION", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(ConditionalExpression node) {
-		minimapFile.update(createEvent(node, "CONDITIONAL EXPRESSION", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(IfStatement node) {
-		minimapFile.update(createEvent(node, "IF STATEMENT", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(SwitchExpression node) {
-		minimapFile.update(createEvent(node, "SWITCH EXPRESSION", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(SwitchCase node) {
-		minimapFile.update(createEvent(node, "SWITCH CASE", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(ForStatement node) {
-		minimapFile.update(createEvent(node, "FOR STATEMENT", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(EnhancedForStatement node) {
-		minimapFile.update(createEvent(node, "ENHANCED FOR STATEMENT", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(WhileStatement node) {
-		minimapFile.update(createEvent(node, "WHILE STATEMENT", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(ImportDeclaration node) {
-		minimapFile.update(createEvent(node, "IMPORT DECLARATION", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(LambdaExpression node) {
-		minimapFile.update(createEvent(node, "LAMBDA EXPRESSION", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(ReturnStatement node) {
-		minimapFile.update(createEvent(node, "RETURN STATEMENT", Colors.GRAY));
+		inspect(node);
 		return super.visit(node);
 	}
 }

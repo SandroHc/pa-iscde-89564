@@ -9,20 +9,25 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pa.iscde.minimap.service;
+package pa.iscde.minimap.internal;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.swt.graphics.Color;
-import pa.iscde.minimap.service.constants.Colors;
-import pa.iscde.minimap.service.constants.Styles;
+import pa.iscde.minimap.internal.parser.MinimapFile;
+import pa.iscde.minimap.internal.parser.MinimapLine;
+import pa.iscde.minimap.service.InspectionContext;
+import pa.iscde.minimap.utils.Colors;
+import pa.iscde.minimap.utils.Styles;
 
-public class FileEventImpl<N extends ASTNode> implements FileEvent<N> {
+public class InspectionContextImpl<N extends ASTNode> implements InspectionContext {
 
 	public final N node;
+	public final List<MinimapLine> lines;
 
 	// Node info
 	public final int posStart;
@@ -31,14 +36,7 @@ public class FileEventImpl<N extends ASTNode> implements FileEvent<N> {
 	public final int lineStart;
 	public final int lineEnd;
 
-	// Styles
-	private Color foreground = null;
-	private Color background = null;
-	private int style        = Styles.NORMAL;
-	private String icon      = null;
-	private Collection<String> tooltips = new ArrayList<>(0);
-
-	public FileEventImpl(N node) {
+	public InspectionContextImpl(N node, MinimapFile minimapFile) {
 		this.node = node;
 
 		this.posStart = node.getStartPosition();
@@ -47,6 +45,8 @@ public class FileEventImpl<N extends ASTNode> implements FileEvent<N> {
 		CompilationUnit cu = (CompilationUnit) node.getRoot();
 		this.lineStart = cu.getLineNumber(this.posStart);
 		this.lineEnd   = cu.getLineNumber(this.posEnd);
+
+		this.lines = Collections.unmodifiableList(minimapFile.getLines(this.lineStart, this.lineEnd));
 	}
 
 	//<editor-fold desc="Setters" default-state="collaped">
@@ -58,8 +58,8 @@ public class FileEventImpl<N extends ASTNode> implements FileEvent<N> {
 	 * @see Colors for a list of some of the available colors
 	 */
 	@Override
-	public void setForeground(Color color) {
-		this.foreground = color;
+	public void setForeground(final Color color) {
+		this.lines.forEach(l -> l.foreground = color);
 	}
 
 	/**
@@ -70,8 +70,8 @@ public class FileEventImpl<N extends ASTNode> implements FileEvent<N> {
 	 * @see Colors for a list of some of the available colors
 	 */
 	@Override
-	public void setBackground(Color color) {
-		this.background = color;
+	public void setBackground(final Color color) {
+		this.lines.forEach(l -> l.background = color);
 	}
 
 	/**
@@ -82,18 +82,18 @@ public class FileEventImpl<N extends ASTNode> implements FileEvent<N> {
 	 * @see Styles for a list of some of the available styles
 	 */
 	@Override
-	public void setStyle(int style) {
-		this.style = style;
+	public void setStyle(final int style) {
+		this.lines.forEach(l -> l.style = style);
 	}
 
 	/**
 	 * Defines an icon for this statement.
 	 *
-	 * @param iconResource
+	 * @param iconResource The icon resource
 	 */
 	@Override
-	public void setIcon(String iconResource) {
-		this.icon = iconResource;
+	public void setIcon(final String iconResource) {
+		this.lines.get(0).icon = iconResource;
 	}
 
 	/**
@@ -102,8 +102,8 @@ public class FileEventImpl<N extends ASTNode> implements FileEvent<N> {
 	 * @param tooltip The tooltip
 	 */
 	@Override
-	public void addTooltip(String tooltip) {
-		this.tooltips.add(tooltip);
+	public void addTooltip(final String tooltip) {
+		this.lines.get(0).tooltips.add(tooltip);
 	}
 
 	/**
@@ -112,9 +112,10 @@ public class FileEventImpl<N extends ASTNode> implements FileEvent<N> {
 	 * @param tooltips The tooltips
 	 */
 	@Override
-	public void addTooltips(Iterable<String> tooltips) {
+	public void addTooltips(final Iterable<String> tooltips) {
+		Collection<String> lineTooltips = this.lines.get(0).tooltips;
 		for (String tooltip : tooltips) {
-			this.tooltips.add(tooltip);
+			lineTooltips.add(tooltip);
 		}
 	}
 	//</editor-fold>
@@ -138,31 +139,6 @@ public class FileEventImpl<N extends ASTNode> implements FileEvent<N> {
 	@Override
 	public int getLineEnd() {
 		return lineEnd;
-	}
-
-	@Override
-	public Color getForeground() {
-		return foreground;
-	}
-
-	@Override
-	public Color getBackground() {
-		return background;
-	}
-
-	@Override
-	public int getStyle() {
-		return style;
-	}
-
-	@Override
-	public String getIcon() {
-		return icon;
-	}
-
-	@Override
-	public Collection<String> getTooltips() {
-		return tooltips;
 	}
 	//</editor-fold>
 }
