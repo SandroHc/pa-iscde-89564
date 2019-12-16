@@ -1,4 +1,4 @@
-package pa.iscde.minimap.internal;
+package pa.iscde.minimap.extensibility.base;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -7,12 +7,9 @@ import pa.iscde.minimap.extensibility.MinimapInspection;
 import pa.iscde.minimap.service.InspectionContext;
 import pa.iscde.minimap.utils.Colors;
 
-class DemoInspection implements MinimapInspection {
+import static pa.iscde.minimap.utils.Colors.ALL_COLORS;
 
-	private static final Color[] colors = new Color[] {
-			Colors.BLUE, Colors.BROWN, Colors.GRAY, Colors.GREEN, Colors.ORANGE,
-			Colors.PINK, Colors.PURPLE, Colors.YELLOW, Colors.GRAY
-	};
+public class BaseInspection implements MinimapInspection {
 
 	@Override
 	public <N extends ASTNode> void inspect(N node, InspectionContext context) {
@@ -27,6 +24,6 @@ class DemoInspection implements MinimapInspection {
 			return Colors.WHITE;
 		}
 
-		return colors[Math.abs(node.getClass().getName().hashCode()) % colors.length];
+		return ALL_COLORS[Math.abs(node.getClass().getName().hashCode()) % ALL_COLORS.length];
 	}
 }

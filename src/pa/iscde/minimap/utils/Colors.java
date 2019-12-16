@@ -30,6 +30,11 @@ public class Colors {
 	public static final Color BLACK       = fromHSB(265, 0.83F, 0.2F, 1F);
 	public static final Color TRANSPARENT = fromRGB(  0,   0,   0, 0);
 
+	public static final Color[] ALL_COLORS = new Color[]{
+			Colors.BLUE, Colors.BROWN, Colors.GRAY, Colors.GREEN, Colors.ORANGE,
+			Colors.PINK, Colors.PURPLE, Colors.YELLOW, Colors.GRAY
+	};
+
 
 	private Colors() { }
 

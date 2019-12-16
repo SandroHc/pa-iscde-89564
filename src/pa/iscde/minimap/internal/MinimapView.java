@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
@@ -81,62 +83,39 @@ public class MinimapView implements PidescoView {
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		for(IExtension ext : reg.getExtensionPoint(EXT_POINT_INSPECTION).getExtensions()) {
 			try {
-				MinimapInspection i = (MinimapInspection) ext.getConfigurationElements()[0].createExecutableExtension("class");
-
-				rules.put(ext.getUniqueIdentifier(), i);
+				loadInspection(ext);
 			} catch (Exception e) {
 				LOGGER.error("Error loading extension '" + ext.getSimpleIdentifier() + "'", e);
 			}
 		}
 
-		rules.put("demo", new DemoInspection());
-
 		LOGGER.info("Loaded " + rules.size() + " inspection rules");
+	}
+
+	private void loadInspection(IExtension ext) throws CoreException {
+		String extId = ext.getSimpleIdentifier();
+		String extName = ext.getLabel();
+
+		LOGGER.info("Loading extension '" + extId + '\'');
+
+		for (IConfigurationElement conf : ext.getConfigurationElements()) {
+			String inspectionId = conf.getAttribute("id");
+			String inspectionName = conf.getAttribute("name");
+			String inspectionDescription = conf.getAttribute("description");
+
+			LOGGER.info("Loading inspection '" + extId + '@' + inspectionId + '\'');
+
+			MinimapInspection impl = (MinimapInspection) conf.createExecutableExtension("class");
+
+			rules.put(ext.getUniqueIdentifier(), impl);
+		}
 	}
 
 	@Override
 	public void createContents(Composite viewArea, Map<String, Image> images) {
 		this.root = viewArea;
 
-		JavaEditorListener listener = new JavaEditorListener() {
-			@Override
-			public void fileOpened(File file) {
-				LOGGER.info("File opened: " + file);
-
-				// TODO: do this in a worker thread
-				// TODO: implement way to enable/disable rules
-				Collection<MinimapLine> lines = new MinimapFile(file).parse(javaEditorServices, rules.values());
-
-				createScrollComponent(lines);
-
-
-//				StyledText text = new StyledText(scroll, SWT.BORDER);
-//				text.setText("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-//
-//				FontData data = text.getFont().getFontData()[0];
-//				Font font1 = new Font(scroll.getDisplay(), data.getName(), data.getHeight(), data.getStyle());
-//
-//				StyleRange style1 = new StyleRange();
-//				style1.start = 0;
-//				style1.length = 10;
-//				style1.fontStyle = SWT.BOLD;
-//				style1.font = font1;
-//				style1.background = Colors.PURPLE;
-//				text.setStyleRange(style1);
-			}
-
-			@Override
-			public void fileClosed(File file) {
-				LOGGER.debug("File closed: " + file);
-			}
-			
-			@Override
-			public void fileSaved(File file) {
-				LOGGER.debug("File saved: " + file);
-				// TODO reload/reparse file
-			}
-		};
-
+		Listener listener = new Listener();
 		javaEditorServices.addListener(listener);
 
 		File openedFile = javaEditorServices.getOpenedFile();
@@ -186,6 +165,46 @@ public class MinimapView implements PidescoView {
 
 		group.pack();
 		scroll.setContent(group);
+	}
+
+	private class Listener implements JavaEditorListener {
+
+		@Override
+		public void fileOpened(File file) {
+			LOGGER.info("File opened: " + file);
+
+			// TODO: do this in a worker thread
+			// TODO: implement way to enable/disable rules
+			Collection<MinimapLine> lines = new MinimapFile(file).parse(javaEditorServices, rules.values());
+
+			createScrollComponent(lines);
+
+
+//				StyledText text = new StyledText(scroll, SWT.BORDER);
+//				text.setText("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+//
+//				FontData data = text.getFont().getFontData()[0];
+//				Font font1 = new Font(scroll.getDisplay(), data.getName(), data.getHeight(), data.getStyle());
+//
+//				StyleRange style1 = new StyleRange();
+//				style1.start = 0;
+//				style1.length = 10;
+//				style1.fontStyle = SWT.BOLD;
+//				style1.font = font1;
+//				style1.background = Colors.PURPLE;
+//				text.setStyleRange(style1);
+		}
+
+		@Override
+		public void fileClosed(File file) {
+			LOGGER.debug("File closed: " + file);
+		}
+
+		@Override
+		public void fileSaved(File file) {
+			LOGGER.debug("File saved: " + file);
+			// TODO reload/reparse file
+		}
 	}
 
 }
