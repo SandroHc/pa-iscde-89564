@@ -23,6 +23,18 @@
       </view>
    </extension>
    <extension
+         id="settings"
+         name="Settings"
+         point="pt.iscte.pidesco.tool">
+      <tool
+            class="pa.iscde.minimap.internal.SettingsTool"
+            description="Opens the settings menu."
+            hasState="false"
+            icon="settings.gif"
+            view="pt.iscte.pidesco.minimap.minimap">
+      </tool>
+   </extension>
+   <extension
          id="base-rules"
          name="Base Rules"
          point="pt.iscte.pidesco.minimap.inspection">

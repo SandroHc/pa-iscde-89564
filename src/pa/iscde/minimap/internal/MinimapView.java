@@ -167,6 +167,10 @@ public class MinimapView implements PidescoView {
 		scroll.setContent(group);
 	}
 
+	public Composite getRoot() {
+		return root;
+	}
+
 	private class Listener implements JavaEditorListener {
 
 		@Override
