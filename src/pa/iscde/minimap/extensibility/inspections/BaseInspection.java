@@ -1,4 +1,4 @@
-package pa.iscde.minimap.extensibility.base;
+package pa.iscde.minimap.extensibility.inspections;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.TypeDeclaration;

@@ -43,18 +43,17 @@ import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchExpression;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.WhileStatement;
-import pa.iscde.minimap.extensibility.MinimapInspection;
 import pa.iscde.minimap.internal.InspectionContextImpl;
+import pa.iscde.minimap.internal.extension.ExtensionRule;
 
-// TODO: um visitor por extensão (permite que a extensão termine os visitors)? ou um visitor partilhado por todas as extensões?
 public class AstVisitor extends ASTVisitor {
 
 	private static final Logger LOGGER = Logger.getLogger(AstVisitor.class);
 
 	private final MinimapFile minimapFile;
-	private final Collection<MinimapInspection> rules;
+	private final Collection<ExtensionRule> rules;
 
-	public AstVisitor(MinimapFile minimapFile, Collection<MinimapInspection> rules) {
+	public AstVisitor(MinimapFile minimapFile, Collection<ExtensionRule> rules) {
 		this.minimapFile = minimapFile;
 		this.rules = rules;
 	}
@@ -62,11 +61,11 @@ public class AstVisitor extends ASTVisitor {
 	private void inspect(final ASTNode node) {
 		final InspectionContextImpl<ASTNode> context = new InspectionContextImpl<>(node, minimapFile);
 
-		for (MinimapInspection rule : rules) {
+		for (ExtensionRule extRule : rules) {
 			try {
-				rule.inspect(node, context);
+				extRule.rule.inspect(node, context);
 			} catch (Exception e) {
-				LOGGER.error("Error running inspection rule: " + rule.getClass().getName(), e);
+				LOGGER.error("Error running inspection rule: " + extRule.uniqueId, e);
 			}
 
 		}

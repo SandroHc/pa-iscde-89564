@@ -12,15 +12,13 @@
 package pa.iscde.minimap.internal;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
@@ -33,14 +31,15 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import pa.iscde.minimap.extensibility.MinimapInspection;
+import pa.iscde.minimap.Activator;
+import pa.iscde.minimap.internal.extension.Extension;
+import pa.iscde.minimap.internal.extension.ExtensionRule;
+import pa.iscde.minimap.internal.listeners.ButtonClicked;
 import pa.iscde.minimap.internal.parser.MinimapFile;
+import pa.iscde.minimap.internal.parser.MinimapLine;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorListener;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
-import pa.iscde.minimap.Activator;
-import pa.iscde.minimap.internal.listeners.ButtonClicked;
-import pa.iscde.minimap.internal.parser.MinimapLine;
 
 public class MinimapView implements PidescoView {
 
@@ -55,7 +54,9 @@ public class MinimapView implements PidescoView {
 	private static MinimapView instance;
 
 	private final JavaEditorServices javaEditorServices;
-	private final Map<String, MinimapInspection> rules;
+
+	private final Collection<Extension> extensions;
+	private final Collection<ExtensionRule> activeRules;
 
 	/* SWT Components */
 	private Composite root;
@@ -64,7 +65,8 @@ public class MinimapView implements PidescoView {
 
 	public MinimapView() {
 		instance = this;
-		rules = new HashMap<>();
+		extensions = new ArrayList<>(10);
+		activeRules = new ArrayList<>(10);
 
 		BundleContext context = Activator.getContext();
 		ServiceReference<JavaEditorServices> serviceReference = context.getServiceReference(JavaEditorServices.class);
@@ -78,37 +80,23 @@ public class MinimapView implements PidescoView {
 	}
 	
 	private void loadInspections() {
-		rules.clear();
+		extensions.clear();
+		activeRules.clear();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		for(IExtension ext : reg.getExtensionPoint(EXT_POINT_INSPECTION).getExtensions()) {
 			try {
-				loadInspection(ext);
+				LOGGER.info("Loading extension '" + ext.getSimpleIdentifier());
+
+				Extension extension = new Extension(ext);
+				this.extensions.add(extension);
+				this.activeRules.addAll(extension.rules);
 			} catch (Exception e) {
 				LOGGER.error("Error loading extension '" + ext.getSimpleIdentifier() + "'", e);
 			}
 		}
 
-		LOGGER.info("Loaded " + rules.size() + " inspection rules");
-	}
-
-	private void loadInspection(IExtension ext) throws CoreException {
-		String extId = ext.getSimpleIdentifier();
-		String extName = ext.getLabel();
-
-		LOGGER.info("Loading extension '" + extId + '\'');
-
-		for (IConfigurationElement conf : ext.getConfigurationElements()) {
-			String inspectionId = conf.getAttribute("id");
-			String inspectionName = conf.getAttribute("name");
-			String inspectionDescription = conf.getAttribute("description");
-
-			LOGGER.info("Loading inspection '" + extId + '@' + inspectionId + '\'');
-
-			MinimapInspection impl = (MinimapInspection) conf.createExecutableExtension("class");
-
-			rules.put(ext.getUniqueIdentifier(), impl);
-		}
+		LOGGER.info("Loaded " + activeRules.size() + " inspection rules");
 	}
 
 	@Override
@@ -179,7 +167,7 @@ public class MinimapView implements PidescoView {
 
 			// TODO: do this in a worker thread
 			// TODO: implement way to enable/disable rules
-			Collection<MinimapLine> lines = new MinimapFile(file).parse(javaEditorServices, rules.values());
+			Collection<MinimapLine> lines = new MinimapFile(file).parse(javaEditorServices, activeRules);
 
 			createScrollComponent(lines);
 

@@ -22,8 +22,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.log4j.Logger;
-import pa.iscde.minimap.extensibility.MinimapInspection;
-import pa.iscde.minimap.internal.MinimapView;
+import pa.iscde.minimap.internal.extension.ExtensionRule;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 
 public class MinimapFile {
@@ -67,11 +66,11 @@ public class MinimapFile {
 	/**
 	 * Parses the current file with the active inspection rules.
 	 *
-	 * @param services	Instance of the Java Editor services
-	 * @param rules		Active inspection rules
+	 * @param services    Instance of the Java Editor services
+	 * @param rules        Active inspection rules
 	 * @return list of line with the rules' styles applied
 	 */
-	public Collection<MinimapLine> parse(JavaEditorServices services, Collection<MinimapInspection> rules) {
+	public Collection<MinimapLine> parse(JavaEditorServices services, Collection<ExtensionRule> rules) {
 		LOGGER.info("Parsing file '" + file.getName() + "' with " + rules.size() + " rules");
 
 		services.parseFile(file, new AstVisitor(this, rules));
