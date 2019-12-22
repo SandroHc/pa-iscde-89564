@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2019.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Authors:
+ *  - Sandro Marques <https://sandrohc.net>
+ */
+
 package pa.iscde.minimap.internal.extension;
 
 import java.util.Objects;
@@ -6,7 +17,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import pa.iscde.minimap.extensibility.MinimapInspection;
-import pa.iscde.minimap.internal.SettingsManager;
 
 import static pa.iscde.minimap.extensibility.inspections.NoopInspection.NOOP;
 

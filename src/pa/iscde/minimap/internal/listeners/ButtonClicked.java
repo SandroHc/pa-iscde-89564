@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2019.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Authors:
+ *  - Sandro Marques <https://sandrohc.net>
+ */
+
 package pa.iscde.minimap.internal.listeners;
 
 import org.eclipse.swt.events.MouseAdapter;

@@ -127,7 +127,7 @@
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         An example of an inspection rule can be seen at &lt;pre&gt;pa.iscde.minimap.extensibility.inspections.BaseInspection&lt;/pre&gt;.
       </documentation>
    </annotation>
 
