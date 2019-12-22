@@ -65,7 +65,7 @@ public class AstVisitor extends ASTVisitor {
 			try {
 				extRule.rule.inspect(node, context);
 			} catch (Exception e) {
-				LOGGER.error("Error running inspection rule: " + extRule.uniqueId, e);
+				LOGGER.error("Error running inspection rule: " + extRule.id, e);
 			}
 
 		}

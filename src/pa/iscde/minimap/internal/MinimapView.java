@@ -80,6 +80,7 @@ public class MinimapView implements PidescoView {
 	}
 	
 	private void loadInspections() {
+		SettingsManager.load();
 		extensions.clear();
 		activeRules.clear();
 
@@ -91,12 +92,15 @@ public class MinimapView implements PidescoView {
 				Extension extension = new Extension(ext);
 				this.extensions.add(extension);
 				this.activeRules.addAll(extension.rules);
+
+				extension.rules.forEach(rule -> SettingsManager.isEnabled(rule.id));
 			} catch (Exception e) {
 				LOGGER.error("Error loading extension '" + ext.getSimpleIdentifier() + "'", e);
 			}
 		}
 
 		LOGGER.info("Loaded " + activeRules.size() + " inspection rules");
+		SettingsManager.save();
 	}
 
 	@Override

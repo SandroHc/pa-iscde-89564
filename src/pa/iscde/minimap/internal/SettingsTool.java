@@ -1,6 +1,7 @@
 package pa.iscde.minimap.internal;
 
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import pt.iscte.pidesco.extensibility.PidescoTool;
@@ -14,13 +15,16 @@ public class SettingsTool implements PidescoTool {
 
 		MinimapView minimap = MinimapView.getInstance();
 
-		// create a dialog with ok and cancel buttons and a question icon
-		MessageBox dialog = new MessageBox(minimap.getRoot().getShell(), SWT.ICON_QUESTION | SWT.OK | SWT.CANCEL);
-		dialog.setText("My info");
-		dialog.setMessage("Do you really want to do this?");
-
-		// open dialog and await user selection
+		SettingsDialog dialog = new SettingsDialog(minimap.getRoot().getShell());
 		int returnCode = dialog.open();
+
+		if (returnCode == IDialogConstants.OK_ID) {
+			System.out.println("OK clicked");
+		} else if (returnCode == IDialogConstants.CANCEL_ID) {
+			System.out.println("CANCEL clicked");
+		} else {
+			System.out.println("UNK: " + returnCode);
+		}
 	}
 
 }
