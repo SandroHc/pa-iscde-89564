@@ -63,11 +63,10 @@ public class AstVisitor extends ASTVisitor {
 
 		for (ExtensionRule extRule : rules) {
 			try {
-				extRule.rule.inspect(node, context);
+				extRule.getRule().inspect(node, context);
 			} catch (Exception e) {
 				LOGGER.error("Error running inspection rule: " + extRule.id, e);
 			}
-
 		}
 	}
 

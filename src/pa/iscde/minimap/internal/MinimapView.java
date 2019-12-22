@@ -44,6 +44,7 @@ import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
 public class MinimapView implements PidescoView {
 
 	private static final Logger LOGGER = Logger.getLogger(MinimapView.class);
+
 	public static final String VIEW_ID = "pt.iscte.pidesco.minimap.minimap";
 	public static final String EXT_POINT_INSPECTION = "pt.iscte.pidesco.minimap.inspection";
 
@@ -57,6 +58,8 @@ public class MinimapView implements PidescoView {
 
 	private final Collection<Extension> extensions;
 	private final Collection<ExtensionRule> activeRules;
+
+	private File activeFile = null;
 
 	/* SWT Components */
 	private Composite root;
@@ -93,7 +96,15 @@ public class MinimapView implements PidescoView {
 				this.extensions.add(extension);
 				this.activeRules.addAll(extension.rules);
 
-				extension.rules.forEach(rule -> SettingsManager.isEnabled(rule.id));
+				// Load rule stat
+				for (ExtensionRule rule : extension.rules) {
+					if (rule.isErrored()) {
+						rule.setEnabled(false);
+						SettingsManager.setEnabled(rule);
+					} else {
+						rule.setEnabled(SettingsManager.isEnabled(rule));
+					}
+				}
 			} catch (Exception e) {
 				LOGGER.error("Error loading extension '" + ext.getSimpleIdentifier() + "'", e);
 			}
@@ -163,43 +174,61 @@ public class MinimapView implements PidescoView {
 		return root;
 	}
 
+	public Collection<Extension> getExtensions() {
+		return extensions;
+	}
+
+	public File getActiveFile() {
+		return activeFile;
+	}
+
+	public void parseFile(File file) {
+		this.activeFile = file;
+
+		if (file == null) {
+			this.scroll.getContent().dispose();
+			return;
+		}
+
+		// TODO: do this in a worker thread
+		// TODO: implement way to enable/disable rules
+		Collection<MinimapLine> lines = new MinimapFile(file).parse(javaEditorServices, activeRules);
+
+		createScrollComponent(lines);
+
+//		StyledText text = new StyledText(scroll, SWT.BORDER);
+//		text.setText("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+//
+//		FontData data = text.getFont().getFontData()[0];
+//		Font font1 = new Font(scroll.getDisplay(), data.getName(), data.getHeight(), data.getStyle());
+//
+//		StyleRange style1 = new StyleRange();
+//		style1.start = 0;
+//		style1.length = 10;
+//		style1.fontStyle = SWT.BOLD;
+//		style1.font = font1;
+//		style1.background = Colors.PURPLE;
+//		text.setStyleRange(style1);
+	}
+
 	private class Listener implements JavaEditorListener {
 
 		@Override
 		public void fileOpened(File file) {
 			LOGGER.info("File opened: " + file);
-
-			// TODO: do this in a worker thread
-			// TODO: implement way to enable/disable rules
-			Collection<MinimapLine> lines = new MinimapFile(file).parse(javaEditorServices, activeRules);
-
-			createScrollComponent(lines);
-
-
-//				StyledText text = new StyledText(scroll, SWT.BORDER);
-//				text.setText("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-//
-//				FontData data = text.getFont().getFontData()[0];
-//				Font font1 = new Font(scroll.getDisplay(), data.getName(), data.getHeight(), data.getStyle());
-//
-//				StyleRange style1 = new StyleRange();
-//				style1.start = 0;
-//				style1.length = 10;
-//				style1.fontStyle = SWT.BOLD;
-//				style1.font = font1;
-//				style1.background = Colors.PURPLE;
-//				text.setStyleRange(style1);
+			parseFile(file);
 		}
 
 		@Override
 		public void fileClosed(File file) {
 			LOGGER.debug("File closed: " + file);
+			parseFile(null);
 		}
 
 		@Override
 		public void fileSaved(File file) {
 			LOGGER.debug("File saved: " + file);
-			// TODO reload/reparse file
+			parseFile(file);
 		}
 	}
 

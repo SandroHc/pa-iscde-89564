@@ -12,8 +12,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.apache.log4j.Logger;
+import pa.iscde.minimap.internal.extension.ExtensionRule;
 
 public class SettingsManager {
 
@@ -22,7 +24,7 @@ public class SettingsManager {
 	/** path in which the settings file is stored */
 	private static final Path SETTINGS_PATH = Paths.get("minimap.ini");
 
-	private static final Gson GSON = new Gson();
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final Type SETTINGS_TYPE = new TypeToken<Map<String, Boolean>>(){}.getType();
 
 	/** the state that new extension rules will have */
@@ -49,10 +51,10 @@ public class SettingsManager {
 		}
 	}
 
-	public static void save() {
+	public static boolean save() {
 		if (!dirty) {
 			LOGGER.debug("Settings unchanged");
-			return;
+			return false;
 		}
 
 		try {
@@ -67,17 +69,29 @@ public class SettingsManager {
 			dirty = false;
 			LOGGER.info("Saved settings for " + settings.size() + " rules");
 		}
+
+		return true;
 	}
 
-	public static boolean isEnabled(String ruleId) {
-		return settings.computeIfAbsent(ruleId, key -> {
+	public static boolean isEnabled(ExtensionRule rule) {
+		if (rule == null) {
+			return false;
+		}
+
+		return settings.computeIfAbsent(rule.id, key -> {
 			dirty = true;
 			return DEFAULT_STATE;
 		});
 	}
 
-	public static void setEnabled(String ruleId, boolean enabled) {
-		settings.put(ruleId, enabled);
-		dirty = true;
+	public static void setEnabled(ExtensionRule rule) {
+		if (rule == null) {
+			return;
+		}
+
+		Boolean prev = settings.put(rule.id, rule.isEnabled());
+
+		// Only mark dirty if the value changed
+		dirty |= !((Boolean) rule.isEnabled()).equals(prev);
 	}
 }

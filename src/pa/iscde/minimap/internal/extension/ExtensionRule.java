@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import pa.iscde.minimap.extensibility.MinimapInspection;
+import pa.iscde.minimap.internal.SettingsManager;
 
 import static pa.iscde.minimap.extensibility.inspections.NoopInspection.NOOP;
 
@@ -16,9 +17,10 @@ public class ExtensionRule {
 	public final String id;
 	public final String name;
 	public final String description;
-	public final MinimapInspection rule;
+	private final MinimapInspection rule;
 
-	public final boolean errored;
+	private final boolean errored;
+	private boolean enabled;
 
 	public ExtensionRule(Extension ext, String id, String name, String description, MinimapInspection rule) {
 		this.id = ext.id + ":" + id;
@@ -44,6 +46,22 @@ public class ExtensionRule {
 			LOGGER.error("Error loading extension rule:" + id, e);
 			return NOOP;
 		}
+	}
+
+	public MinimapInspection getRule() {
+		return isEnabled() ? rule : NOOP;
+	}
+
+	public boolean isErrored() {
+		return errored;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	@Override
