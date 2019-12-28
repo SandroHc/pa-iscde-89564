@@ -59,7 +59,13 @@ public class AstVisitor extends ASTVisitor {
 	}
 
 	private void inspect(final ASTNode node) {
-		final InspectionContextImpl<ASTNode> context = new InspectionContextImpl<>(node, minimapFile);
+		final InspectionContextImpl<ASTNode> context;
+		try {
+			context = new InspectionContextImpl<>(node, minimapFile);
+		} catch(Exception e) {
+			LOGGER.error("Unable to create context for node: " + node.getClass().getSimpleName(), e);
+			return;
+		}
 
 		for (ExtensionRule extRule : rules) {
 			try {

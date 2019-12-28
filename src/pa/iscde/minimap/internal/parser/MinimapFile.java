@@ -85,6 +85,13 @@ public class MinimapFile {
 	 * @return range of lines
 	 */
 	public List<MinimapLine> getLines(int from, int to) {
+		// If -1, means the LOC is not present in the original source file.
+		// If -2, means the Compilation Unit doesn't know the line in the original source file.
+		// For both cases, assume all the lines until the end of the file.
+		if (to == -1 || to == -2) {
+			to = this.lines.size();
+		}
+
 		// Adjust values to the 0-based indexes
 		from -= 1;
 		to   -= 1;
