@@ -137,7 +137,7 @@ public class MinimapView implements PidescoView {
 			LOGGER.debug("Creating new ScrolledComposite");
 
 			ScrolledComposite scroll = new ScrolledComposite(this.root, SWT.V_SCROLL);
-			scroll.setBackground(this.root.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+//			scroll.setBackground(this.root.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
 			scroll.setExpandHorizontal(true);
 			this.scroll = scroll;
 		} else if (this.scroll.getContent() != null && !this.scroll.getContent().isDisposed()) {

@@ -144,7 +144,7 @@ public class SettingsDialog extends TitleAreaDialog {
 		if (item.getData() instanceof ExtensionRule) {
 			ExtensionRule rule = (ExtensionRule) item.getData();
 			rule.setEnabled(item.getChecked());
-			SettingsManager.setEnabled(rule);
+			SettingsManager.update(rule);
 		}
 
 		for (TreeItem child : item.getItems()) {
