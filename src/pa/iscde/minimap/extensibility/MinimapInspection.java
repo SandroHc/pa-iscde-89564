@@ -22,6 +22,6 @@ public interface MinimapInspection {
 	/**
 	 * Inspect an AST Node.
 	 */
-	<N extends ASTNode> void inspect(N node, InspectionContext context);
+	void inspect(ASTNode node, InspectionContext context);
 
 }

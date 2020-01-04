@@ -27,7 +27,7 @@ public class NoopInspection implements MinimapInspection {
 	}
 
 	@Override
-	public <N extends ASTNode> void inspect(N node, InspectionContext context) {
+	public void inspect(ASTNode node, InspectionContext context) {
 		// NO-OP
 	}
 }

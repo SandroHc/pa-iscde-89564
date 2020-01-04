@@ -23,7 +23,7 @@ import static pa.iscde.minimap.utils.Colors.ALL_COLORS;
 public class BaseInspection implements MinimapInspection {
 
 	@Override
-	public <N extends ASTNode> void inspect(N node, InspectionContext context) {
+	public void inspect(ASTNode node, InspectionContext context) {
 		String name = node.getClass().getSimpleName();
 
 		context.addTooltip("L" + context.getLineStart() + ": " + name);

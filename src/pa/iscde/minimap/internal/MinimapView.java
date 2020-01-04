@@ -164,6 +164,21 @@ public class MinimapView implements PidescoView {
 						javaEditorServices.selectText(javaEditorServices.getOpenedFile(), line.lineStartingOffset, 0);
 					})
 			);
+
+			// TODO: use a more flexible style
+//			StyledText text = new StyledText(scroll, SWT.BORDER);
+//			text.setText("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+//
+//			FontData data = text.getFont().getFontData()[0];
+//			Font font1 = new Font(scroll.getDisplay(), data.getName(), data.getHeight(), data.getStyle());
+//
+//			StyleRange style1 = new StyleRange();
+//			style1.start = 0;
+//			style1.length = 10;
+//			style1.fontStyle = SWT.BOLD;
+//			style1.font = font1;
+//			style1.background = Colors.PURPLE;
+//			text.setStyleRange(style1);
 		}
 
 		group.pack();
@@ -191,24 +206,9 @@ public class MinimapView implements PidescoView {
 		}
 
 		// TODO: do this in a worker thread
-		// TODO: implement way to enable/disable rules
 		Collection<MinimapLine> lines = new MinimapFile(file).parse(javaEditorServices, activeRules);
 
 		createScrollComponent(lines);
-
-//		StyledText text = new StyledText(scroll, SWT.BORDER);
-//		text.setText("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-//
-//		FontData data = text.getFont().getFontData()[0];
-//		Font font1 = new Font(scroll.getDisplay(), data.getName(), data.getHeight(), data.getStyle());
-//
-//		StyleRange style1 = new StyleRange();
-//		style1.start = 0;
-//		style1.length = 10;
-//		style1.fontStyle = SWT.BOLD;
-//		style1.font = font1;
-//		style1.background = Colors.PURPLE;
-//		text.setStyleRange(style1);
 	}
 
 	private class Listener implements JavaEditorListener {
