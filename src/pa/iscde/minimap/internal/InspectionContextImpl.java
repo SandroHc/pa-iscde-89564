@@ -11,6 +11,7 @@
 
 package pa.iscde.minimap.internal;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -30,14 +31,21 @@ public class InspectionContextImpl<N extends ASTNode> implements InspectionConte
 	public final List<MinimapLine> lines;
 
 	// Node info
+	public final Path file;
+
 	public final int posStart;
 	public final int posEnd;
 
 	public final int lineStart;
 	public final int lineEnd;
 
+	public final int colStart;
+	public final int colEnd;
+
 	public InspectionContextImpl(N node, MinimapFile minimapFile) {
 		this.node = node;
+
+		this.file = minimapFile.file.toPath();
 
 		this.posStart = node.getStartPosition();
 		this.posEnd = this.posStart + node.getLength();
@@ -45,6 +53,8 @@ public class InspectionContextImpl<N extends ASTNode> implements InspectionConte
 		CompilationUnit cu = (CompilationUnit) node.getRoot();
 		this.lineStart = cu.getLineNumber(this.posStart);
 		this.lineEnd   = cu.getLineNumber(this.posEnd);
+		this.colStart  = cu.getColumnNumber(this.posStart);
+		this.colEnd    = cu.getColumnNumber(this.posEnd);
 
 		this.lines = Collections.unmodifiableList(minimapFile.getLines(this.lineStart, this.lineEnd));
 	}
@@ -122,6 +132,11 @@ public class InspectionContextImpl<N extends ASTNode> implements InspectionConte
 
 	//<editor-fold desc="Getters" default-state="collaped">
 	@Override
+	public Path getFile() {
+		return file;
+	}
+
+	@Override
 	public int getPosStart() {
 		return posStart;
 	}
@@ -139,6 +154,16 @@ public class InspectionContextImpl<N extends ASTNode> implements InspectionConte
 	@Override
 	public int getLineEnd() {
 		return lineEnd;
+	}
+
+	@Override
+	public int getColumnStart() {
+		return colStart;
+	}
+
+	@Override
+	public int getColumnEnd() {
+		return colEnd;
 	}
 	//</editor-fold>
 }

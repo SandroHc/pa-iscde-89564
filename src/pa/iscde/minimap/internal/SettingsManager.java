@@ -95,7 +95,7 @@ public class SettingsManager {
 		});
 	}
 
-	public static void setEnabled(ExtensionRule rule) {
+	public static void update(ExtensionRule rule) {
 		if (rule == null) {
 			return;
 		}

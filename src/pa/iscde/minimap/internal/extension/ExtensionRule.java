@@ -24,6 +24,8 @@ public class ExtensionRule {
 
 	private static final Logger LOGGER = Logger.getLogger(ExtensionRule.class);
 
+	public final Extension parent;
+
 	public final String id;
 	public final String name;
 	public final String description;
@@ -33,6 +35,7 @@ public class ExtensionRule {
 	private boolean enabled;
 
 	public ExtensionRule(Extension ext, String id, String name, String description, MinimapInspection rule) {
+		this.parent = ext;
 		this.id = ext.id + ":" + id;
 		this.name = name;
 		this.description = description;

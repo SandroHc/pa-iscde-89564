@@ -1,5 +1,5 @@
 # Minimap
-Minimap component for the Pidesco project. Provides a way to easily navigate the active file.
+Minimap component for the [Pidesco project](https://github.com/andre-santos-pt/pidesco). Provides a way to easily navigate the active file.
 
 Other extensions can develop new inspection rules and integrate them into the minimap. 
 

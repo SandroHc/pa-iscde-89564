@@ -100,7 +100,7 @@ public class MinimapView implements PidescoView {
 				for (ExtensionRule rule : extension.rules) {
 					if (rule.isErrored()) {
 						rule.setEnabled(false);
-						SettingsManager.setEnabled(rule);
+						SettingsManager.update(rule);
 					} else {
 						rule.setEnabled(SettingsManager.isEnabled(rule));
 					}
