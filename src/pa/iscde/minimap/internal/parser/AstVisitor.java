@@ -83,13 +83,19 @@ public class AstVisitor extends ASTVisitor {
 	}
 
 	@Override
-	public boolean visit(FieldDeclaration node) {
+	public boolean visit(Javadoc node) {
 		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
-	public boolean visit(Javadoc node) {
+	public boolean visit(TypeDeclaration node) {
+		inspect(node);
+		return super.visit(node);
+	}
+
+	@Override
+	public boolean visit(FieldDeclaration node) {
 		inspect(node);
 		return super.visit(node);
 	}
@@ -102,18 +108,13 @@ public class AstVisitor extends ASTVisitor {
 
 	@Override
 	public boolean visit(MethodInvocation node) {
+
 		inspect(node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(SingleVariableDeclaration node) {
-		inspect(node);
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(TypeDeclaration node) {
 		inspect(node);
 		return super.visit(node);
 	}
@@ -131,7 +132,19 @@ public class AstVisitor extends ASTVisitor {
 	}
 
 	@Override
-	public boolean visit(ArrayAccess node) {
+	public boolean visit(EnumDeclaration node) {
+		inspect(node);
+		return super.visit(node);
+	}
+
+	@Override
+	public boolean visit(EnumConstantDeclaration node) {
+		inspect(node);
+		return super.visit(node);
+	}
+
+	@Override
+	public boolean visit(ImportDeclaration node) {
 		inspect(node);
 		return super.visit(node);
 	}
@@ -144,6 +157,12 @@ public class AstVisitor extends ASTVisitor {
 
 	@Override
 	public boolean visit(ArrayInitializer node) {
+		inspect(node);
+		return super.visit(node);
+	}
+
+	@Override
+	public boolean visit(ArrayAccess node) {
 		inspect(node);
 		return super.visit(node);
 	}
@@ -162,18 +181,6 @@ public class AstVisitor extends ASTVisitor {
 
 	@Override
 	public boolean visit(CreationReference node) {
-		inspect(node);
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(EnumConstantDeclaration node) {
-		inspect(node);
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(EnumDeclaration node) {
 		inspect(node);
 		return super.visit(node);
 	}
@@ -216,12 +223,6 @@ public class AstVisitor extends ASTVisitor {
 
 	@Override
 	public boolean visit(WhileStatement node) {
-		inspect(node);
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(ImportDeclaration node) {
 		inspect(node);
 		return super.visit(node);
 	}

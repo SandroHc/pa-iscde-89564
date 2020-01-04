@@ -1,7 +1,7 @@
 # Minimap
-Minimap component for the [Pidesco project](https://github.com/andre-santos-pt/pidesco). Provides a way to easily navigate the active file.
+Minimap component for the [Pidesco project](https://github.com/andre-santos-pt/pidesco). Provides a way to easily navigate the active file. Other extensions can develop new inspection rules and integrate them into the minimap. 
 
-Other extensions can develop new inspection rules and integrate them into the minimap. 
+**To extend this plugin, please see [the wiki page](https://github.com/SandroHc/pa-iscde-89564/wiki#extending-my-plugin).**
 
 ## Extension Points
 - `inspection` ([schema](https://github.com/SandroHc/pa-iscde-89564/blob/master/schema/pa.iscde.minimap.inspection.exsd) • [interface](https://github.com/SandroHc/pa-iscde-89564/blob/master/src/pa/iscde/minimap/extensibility/MinimapInspection.java))
