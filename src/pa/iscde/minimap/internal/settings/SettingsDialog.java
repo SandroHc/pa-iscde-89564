@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pa.iscde.minimap.internal;
+package pa.iscde.minimap.internal.settings;
 
 import org.apache.log4j.Logger;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import pa.iscde.minimap.internal.MinimapView;
 import pa.iscde.minimap.internal.extension.Extension;
 import pa.iscde.minimap.internal.extension.ExtensionRule;
 

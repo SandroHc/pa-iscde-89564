@@ -21,7 +21,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.swt.graphics.Color;
 import pa.iscde.minimap.internal.parser.MinimapFile;
 import pa.iscde.minimap.internal.parser.MinimapLine;
-import pa.iscde.minimap.service.InspectionContext;
+import pa.iscde.minimap.extensibility.InspectionContext;
 import pa.iscde.minimap.utils.Colors;
 import pa.iscde.minimap.utils.Styles;
 

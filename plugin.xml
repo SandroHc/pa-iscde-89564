@@ -27,7 +27,7 @@
          name="Settings"
          point="pt.iscte.pidesco.tool">
       <tool
-            class="pa.iscde.minimap.internal.SettingsTool"
+            class="pa.iscde.minimap.internal.settings.SettingsTool"
             description="Opens the settings menu."
             hasState="false"
             icon="settings.gif"

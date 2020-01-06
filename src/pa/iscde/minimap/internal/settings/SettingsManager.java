@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pa.iscde.minimap.internal;
+package pa.iscde.minimap.internal.settings;
 
 import java.io.BufferedWriter;
 import java.lang.reflect.Type;

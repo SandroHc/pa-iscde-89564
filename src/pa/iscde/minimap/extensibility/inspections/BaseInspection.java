@@ -15,7 +15,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.swt.graphics.Color;
 import pa.iscde.minimap.extensibility.MinimapInspection;
-import pa.iscde.minimap.service.InspectionContext;
+import pa.iscde.minimap.extensibility.InspectionContext;
 import pa.iscde.minimap.utils.Colors;
 
 import static pa.iscde.minimap.utils.Colors.ALL_COLORS;

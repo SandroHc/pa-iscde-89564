@@ -29,14 +29,14 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import pa.iscde.minimap.Activator;
+import pa.iscde.minimap.MinimapActivator;
 import pa.iscde.minimap.internal.extension.Extension;
 import pa.iscde.minimap.internal.extension.ExtensionRule;
 import pa.iscde.minimap.internal.listeners.ButtonClicked;
 import pa.iscde.minimap.internal.parser.MinimapFile;
 import pa.iscde.minimap.internal.parser.MinimapLine;
+import pa.iscde.minimap.internal.settings.SettingsManager;
+import pa.iscde.minimap.service.MinimapServices;
 import pt.iscte.pidesco.extensibility.PidescoView;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorListener;
 import pt.iscte.pidesco.javaeditor.service.JavaEditorServices;
@@ -45,16 +45,11 @@ public class MinimapView implements PidescoView {
 
 	private static final Logger LOGGER = Logger.getLogger(MinimapView.class);
 
-	public static final String VIEW_ID = "pt.iscte.pidesco.minimap.minimap";
-	public static final String EXT_POINT_INSPECTION = "pt.iscte.pidesco.minimap.inspection";
-
 	public static final MinimapLine EMPTY_LINE = new MinimapLine(0, 1, "No file opened.");
 	public static final List<MinimapLine> EMPTY_LINE_LIST = Collections.singletonList(EMPTY_LINE);
 
 	/** the current instance for the plugin view */
 	private static MinimapView instance;
-
-	private final JavaEditorServices javaEditorServices;
 
 	private final Collection<Extension> extensions;
 	private final Collection<ExtensionRule> activeRules;
@@ -71,24 +66,20 @@ public class MinimapView implements PidescoView {
 		extensions = new ArrayList<>(10);
 		activeRules = new ArrayList<>(10);
 
-		BundleContext context = Activator.getContext();
-		ServiceReference<JavaEditorServices> serviceReference = context.getServiceReference(JavaEditorServices.class);
-		javaEditorServices = context.getService(serviceReference);
-
 		loadInspections();
 	}
 
 	public static MinimapView getInstance() {
 		return instance;
 	}
-	
+
 	private void loadInspections() {
 		SettingsManager.load();
 		extensions.clear();
 		activeRules.clear();
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		for(IExtension ext : reg.getExtensionPoint(EXT_POINT_INSPECTION).getExtensions()) {
+		for(IExtension ext : reg.getExtensionPoint(MinimapServices.EXT_POINT_INSPECTION_ID).getExtensions()) {
 			try {
 				LOGGER.info("Loading extension '" + ext.getSimpleIdentifier());
 
@@ -119,6 +110,8 @@ public class MinimapView implements PidescoView {
 		this.root = viewArea;
 
 		Listener listener = new Listener();
+
+		JavaEditorServices javaEditorServices = MinimapActivator.getInstance().getJavaEditorServices();
 		javaEditorServices.addListener(listener);
 
 		File openedFile = javaEditorServices.getOpenedFile();
@@ -160,8 +153,14 @@ public class MinimapView implements PidescoView {
 			Label label = MinimapLine.createLabel(line, group);
 			label.addMouseListener(
 					new ButtonClicked(() -> {
+						final JavaEditorServices javaEditorServices = MinimapActivator.getInstance().getJavaEditorServices();
+						final File file = javaEditorServices.getOpenedFile();
+
 						LOGGER.info("Navigating to line " + line.lineNumber + " on offset " + line.lineStartingOffset);
-						javaEditorServices.selectText(javaEditorServices.getOpenedFile(), line.lineStartingOffset, 0);
+						javaEditorServices.selectText(file, line.lineStartingOffset, 0);
+
+						// Notify the listeners
+						MinimapActivator.getInstance().getListeners().forEach(l -> l.lineSelected(file, line.lineNumber, line.lineContent));
 					})
 			);
 
@@ -206,7 +205,11 @@ public class MinimapView implements PidescoView {
 		}
 
 		// TODO: do this in a worker thread
+		JavaEditorServices javaEditorServices = MinimapActivator.getInstance().getJavaEditorServices();
 		Collection<MinimapLine> lines = new MinimapFile(file).parse(javaEditorServices, activeRules);
+
+		// Notify the listeners
+		MinimapActivator.getInstance().getListeners().forEach(l -> l.fileParsed(file));
 
 		createScrollComponent(lines);
 	}

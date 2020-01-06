@@ -13,7 +13,7 @@ package pa.iscde.minimap.extensibility.inspections;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import pa.iscde.minimap.extensibility.MinimapInspection;
-import pa.iscde.minimap.service.InspectionContext;
+import pa.iscde.minimap.extensibility.InspectionContext;
 
 /**
  * To be used as a dummy (no-operation) inspection

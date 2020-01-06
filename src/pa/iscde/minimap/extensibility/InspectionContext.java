@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pa.iscde.minimap.service;
+package pa.iscde.minimap.extensibility;
 
 import java.nio.file.Path;
 
