@@ -6,7 +6,8 @@
          <meta.schema plugin="pt.iscte.pidesco.minimap" id="pt.iscte.pidesco.minimap.inspection" name="Minimap Inspection"/>
       </appinfo>
       <documentation>
-         Adds inspection rules that can be activated/deactivated in the Minimap view.
+         &lt;p&gt;Adds inspection rules that can be activated/deactivated in the Minimap view.&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;For more information, visit the wiki: &lt;a href=&quot;https://github.com/SandroHc/pa-iscde-89564/wiki&quot;&gt;https://github.com/SandroHc/pa-iscde-89564/wiki&lt;/a&gt;&lt;/b&gt;&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -109,7 +110,25 @@
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         [Enter extension point usage example here.]
+         &lt;p&gt;&lt;b&gt;For more examples, visit the page on the wiki: &lt;a href=&quot;https://github.com/SandroHc/pa-iscde-89564/wiki#usage&quot;&gt;https://github.com/SandroHc/pa-iscde-89564/wiki#usage&lt;/a&gt;&lt;/b&gt;&lt;/p&gt;
+
+&lt;p&gt;To create your own inspection rules, you must create an implementation of the interface provided, and listen for your desired node type.&lt;/p&gt;
+&lt;p&gt;The following example analyzes &lt;code&gt;MethodInvocation&lt;/code&gt; nodes, changes the text color and style, and adds a tooltip with the name of the method being called.&lt;/p&gt;
+
+&lt;pre lang=&quot;java&quot;&gt;public class MyInpsectionRules implements MinimapInspection {
+	@Override
+	public void inspect(ASTNode node, InspectionContext context) {
+		if (node instanceof MethodInvocation) {
+			String methodName = node.getName().toString();
+			int line = context.getLineStart();
+
+			context.setForeground(Colors.PINK);
+			context.setStyle(Styles.BOLD);
+			context.addTooltip(&quot;METHOD BEING CALLED: &quot; + methodName);
+			context.addTooltip(&quot;LINE &quot; + line);
+		}
+	}
+}&lt;/pre&gt;
       </documentation>
    </annotation>
 
@@ -118,7 +137,8 @@
          <meta.section type="apiinfo"/>
       </appinfo>
       <documentation>
-         [Enter API information here.]
+         &lt;p&gt;For multiple rules, it is recommended to create multiple implementations of the interface (one for each rule).&lt;/p&gt;
+&lt;p&gt;Inspection IDs must be unique for a given extension. Names may be duplicated, but it&apos;s not recommended as it may confuse users.&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -127,9 +147,17 @@
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         An example of an inspection rule can be seen at &lt;pre&gt;pa.iscde.minimap.extensibility.inspections.BaseInspection&lt;/pre&gt;.
+         A working implementation of the inspection rule can be seen at &lt;pre&gt;pa.iscde.minimap.extensibility.inspections.BaseInspection&lt;/pre&gt;.
       </documentation>
    </annotation>
 
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         2020 (c) Sandro Marques &lt;https://sandrohc.net&gt;
+      </documentation>
+   </annotation>
 
 </schema>
