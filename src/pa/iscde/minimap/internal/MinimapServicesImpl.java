@@ -48,6 +48,9 @@ public class MinimapServicesImpl implements MinimapServices {
 			rule.setEnabled(state);
 			SettingsManager.update(rule);
 			SettingsManager.save();
+
+			// Parse file
+			MinimapView.getInstance().parseFile(getOpenedFile());
 		});
 	}
 

@@ -22,7 +22,7 @@ public interface MinimapServices {
 	String EXT_POINT_INSPECTION_ID = "pt.iscte.pidesco.minimap.inspection";
 
 	/**
-	 * Add a new Minimap listener.
+	 * Adds a new Minimap listener.
 	 *
 	 * @param listener the listener
 	 * @since 1.2.0
@@ -30,7 +30,7 @@ public interface MinimapServices {
 	void addListener(MinimapListener listener);
 
 	/**
-	 * Remove a new Minimap listener.
+	 * Removes a Minimap listener.
 	 *
 	 * @param listener the listener
 	 * @since 1.2.0
@@ -47,7 +47,7 @@ public interface MinimapServices {
 	void enableInspection(String extensionId, String inspectionId);
 
 	/**
-	 * Disable the given inspection, and parses the active file.
+	 * Disables the given inspection, and parses the active file.
 	 *
 	 * @param extensionId  the extension identifier
 	 * @param inspectionId the inspection identifier
