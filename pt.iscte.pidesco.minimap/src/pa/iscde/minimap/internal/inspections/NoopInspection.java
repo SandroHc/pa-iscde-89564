@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pa.iscde.minimap.extensibility.inspections;
+package pa.iscde.minimap.internal.inspections;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import pa.iscde.minimap.extensibility.MinimapInspection;

@@ -9,7 +9,7 @@
  *  - Sandro Marques <https://sandrohc.net>
  */
 
-package pa.iscde.minimap.extensibility.inspections;
+package pt.iscte.pidesco.minimap.ext.demo;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -20,7 +20,7 @@ import pa.iscde.minimap.utils.Colors;
 
 import static pa.iscde.minimap.utils.Colors.ALL_COLORS;
 
-public class BaseInspection implements MinimapInspection {
+public class DemoInspection implements MinimapInspection {
 
 	@Override
 	public void inspect(ASTNode node, InspectionContext context) {

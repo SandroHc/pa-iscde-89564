@@ -34,16 +34,5 @@
             view="pt.iscte.pidesco.minimap.minimap">
       </tool>
    </extension>
-   <extension
-         id="base-rules"
-         name="Base Rules"
-         point="pt.iscte.pidesco.minimap.inspection">
-      <inspection
-            class="pa.iscde.minimap.extensibility.inspections.BaseInspection"
-            description="Provides examples for how to implement new inspection rules."
-            id="base-inspection"
-            name="Base Inspections">
-      </inspection>
-   </extension>
 
 </plugin>

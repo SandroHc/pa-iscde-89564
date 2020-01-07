@@ -147,7 +147,7 @@
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         A working implementation of the inspection rule can be seen at &lt;pre&gt;pa.iscde.minimap.extensibility.inspections.BaseInspection&lt;/pre&gt;.
+         A working implementation of the inspection rule can be seen at &lt;pre&gt;pa.iscde.minimap.internal.inspections.BaseInspection&lt;/pre&gt;.
       </documentation>
    </annotation>
 

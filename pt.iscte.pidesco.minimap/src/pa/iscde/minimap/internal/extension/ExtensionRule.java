@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import pa.iscde.minimap.extensibility.MinimapInspection;
 
-import static pa.iscde.minimap.extensibility.inspections.NoopInspection.NOOP;
+import static pa.iscde.minimap.internal.inspections.NoopInspection.NOOP;
 
 public class ExtensionRule {
 

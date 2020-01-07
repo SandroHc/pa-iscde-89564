@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Minimap Demo
+Bundle-SymbolicName: pt.iscte.pidesco.minimap.ext.demo;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: pt.iscte.pidesco.minimap.ext.demo.Activator
+Require-Bundle: pt.iscte.pidesco.minimap,
+ org.eclipse.osgi,
+ org.eclipse.jdt.core,
+ org.eclipse.swt
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: pt.iscte.pidesco.minimap.ext.demo
+Bundle-ActivationPolicy: lazy
+Import-Package: org.osgi.framework,
+ org.eclipse.jdt.core,
+ org.eclipse.swt,
+ org.apache.log4j,
+ pa.iscde.minimap.extensibility,
+ pa.iscde.minimap.service,
+ pa.iscde.minimap.utils
