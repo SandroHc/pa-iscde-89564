@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="search"
+         name="Search"
+         point="pt.iscte.pidesco.minimap.inspection">
+      <inspection
+            class="pt.iscte.pidesco.minimap.ext.search.SearchInspection"
+            description="Displays any search results."
+            id="results"
+            name="Search Results">
+      </inspection>
+   </extension>
+
+</plugin>

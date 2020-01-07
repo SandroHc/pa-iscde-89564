@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Search Extension
+Bundle-SymbolicName: pt.iscte.pidesco.minimap.ext.search;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: pt.iscte.pidesco.minimap.ext.search.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ pt.iscte.pidesco.search,
+ pt.iscte.pidesco.minimap,
+ pt.iscte.pidesco.projectbrowser,
+ org.eclipse.jdt.core,
+ org.eclipse.swt
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: pt.iscte.pidesco.minimap.ext.search
+Import-Package: org.osgi.framework,
+ pa.iscde.minimap.service

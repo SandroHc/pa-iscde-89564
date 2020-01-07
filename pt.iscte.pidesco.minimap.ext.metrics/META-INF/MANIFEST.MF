@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Metrics Extension
+Bundle-SymbolicName: pt.iscte.pidesco.minimap.ext.metrics;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: pt.iscte.pidesco.minimap.ext.metrics.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ pt.iscte.pidesco.minimap,
+ pa.iscde.metrics,
+ org.eclipse.jdt.core,
+ pt.iscte.pidesco.projectbrowser
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: pt.iscte.pidesco.minimap.ext.metrics
+Bundle-ActivationPolicy: lazy

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="metrics"
+         name="File Metrics"
+         point="pt.iscte.pidesco.minimap.inspection">
+      <inspection
+            class="pt.iscte.pidesco.minimap.ext.metrics.MetricsInspection"
+            description="Display metrics over the class declaration."
+            id="base"
+            name="Base Metrics">
+      </inspection>
+   </extension>
+
+</plugin>
