@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/pidesco-minimap.iml" filepath="$PROJECT_DIR$/pidesco-minimap.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pt.iscte.pidesco.minimap/pt.iscte.pidesco.minimap.iml" filepath="$PROJECT_DIR$/pt.iscte.pidesco.minimap/pt.iscte.pidesco.minimap.iml" />
     </modules>
   </component>
 </project>
