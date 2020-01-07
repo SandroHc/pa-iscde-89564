@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IExtension;
 
 public class Extension {

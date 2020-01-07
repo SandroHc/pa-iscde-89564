@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Conventions Extension
+Bundle-SymbolicName: pt.iscte.pidesco.minimap.ext.conventions;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: pt.iscte.pidesco.minimap.ext.conventions.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ pt.iscte.pidesco.conventions,
+ pt.iscte.pidesco.minimap,
+ org.eclipse.jdt.core,
+ org.eclipse.swt
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: pt.iscte.pidesco.minimap.ext.conventions
+Bundle-ActivationPolicy: lazy

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="conventions"
+         name="Convention Checker"
+         point="pt.iscte.pidesco.minimap.inspection">
+      <inspection
+            class="pt.iscte.pidesco.minimap.ext.conventions.ConventionViolationInspection"
+            description="Displays all the violations found on the current file."
+            id="violations"
+            name="Conventions Violations">
+      </inspection>
+   </extension>
+
+</plugin>

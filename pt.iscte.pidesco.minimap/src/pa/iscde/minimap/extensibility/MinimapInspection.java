@@ -11,8 +11,6 @@
 
 package pa.iscde.minimap.extensibility;
 
-import java.io.File;
-
 import org.eclipse.jdt.core.dom.ASTNode;
 
 /**

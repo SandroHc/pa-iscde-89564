@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Remote Debug" type="Remote">
-    <module name="pt.iscte.pidesco.minimap" />
+    <module name="minimap" />
     <option name="USE_SOCKET_TRANSPORT" value="true" />
     <option name="SERVER_MODE" value="true" />
     <option name="SHMEM_ADDRESS" />
